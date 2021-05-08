@@ -1,0 +1,45 @@
+/* -------------------------------------------------------------------------------------------------
+Author:	
+Date:	{{Date}}
+Desc:	Inserts a {{Table}} row.
+Params: 
+    {{EachOmitId|ColList|@{{ColName}} -}}  
+
+Change Log: When, Who: What
+------------------------------------------------------------------------------------------------- */
+CREATE PROCEDURE Security.UserIns
+    {{EachOmitId|ColList|@{{ColName}} {{ColType}}[Last|:,]}}   
+AS
+BEGIN
+	set arithabort on;
+	set nocount on;
+
+	declare @RetCode int;
+	declare @Id int = 0;
+
+    begin tran {{Table}}Ins;
+
+	begin try
+
+		insert into Security.[User] (
+            {{EachOmitId|ColList|{{ColName}}[Last|:,]}}
+		) values (
+            {{EachOmitId|ColList|@{{ColName}}[Last|:,]}}
+		)
+
+		set @Id = SCOPE_IDENTITY();
+
+		commit tran {{Table}}Ins;
+		set @RetCode = 0;
+	end try
+
+	begin catch
+        rollback tran {{Table}}Ins;
+		set @RetCode = 99;
+	end catch
+
+	select 
+	@Id as Id,
+	@RetCode as RetCode;
+END
+go

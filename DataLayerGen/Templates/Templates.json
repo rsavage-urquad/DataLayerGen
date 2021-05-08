@@ -1,0 +1,20 @@
+[
+  {
+    "templateId": "GetById",
+    "title": "Get By Id",
+    "templateFilename": "GetById.txt",
+    "outputName": "{{Schema}}.{{Table}}GetById.sql"
+  },
+  {
+    "templateId": "GetByName",
+    "title": "Get By Name",
+    "templateFilename": "GetByName.txt",
+    "outputName": "{{Schema}}.{{Table}}GetByName.sql"
+  },
+  {
+    "templateId": "Insert",
+    "title": "Insert",
+    "templateFilename": "Insert.txt",
+    "outputName": "{{Schema}}.{{Table}}Ins.sql"
+  }
+]

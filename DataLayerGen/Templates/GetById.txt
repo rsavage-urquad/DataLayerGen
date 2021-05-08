@@ -1,0 +1,29 @@
+/* -------------------------------------------------------------------------------------------------
+Author:	
+Date:	{{Date}}
+Desc:	Retrieves the row for the requested Id(s).
+Params:
+	{{Each|IdCols|@[[ColName]] - Id to retrieve.}}
+    {{If|ActivePresent|@IncludeInactive - Should inactive Rows be returned?}}
+
+Change Log: When, Who: What
+------------------------------------------------------------------------------------------------- */
+CREATE PROCEDURE {{Schema}}.{{Table}}GetById
+	{{Each|IdCols|@[[ColName]] [[ColType]]{Last|:,}}}{{If|ActivePresent|,}}
+    {{If|ActivePresent|@IncludeInactive bit}}
+AS
+BEGIN
+	set arithabort on;
+	set nocount on;
+
+    select
+    {{Each|ColList|{{ColName}}[Last|:,]}} 
+    from {{Schema}}.{{Table}} with(nolock)
+	{{Each|IdCols|[First|where:and] {{ColName}} = @{{ColName}}}}
+	{{SectionIf|ActivePresent}}
+	and (
+		{{ActiveCol}} = {{ActiveValue}} OR
+		@IncludeInactive = 0
+	);
+	{{/SectionIf}}
+END
