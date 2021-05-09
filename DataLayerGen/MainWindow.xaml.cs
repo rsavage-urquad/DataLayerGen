@@ -148,6 +148,9 @@ namespace DataLayerGen
             string nameCol = (nameCbi == null) ? "" : nameCbi.Content.ToString();
             string activeCol = (activeCbi == null) ? "" : activeCbi.Content.ToString();
 
+            nameCol = (nameCol == "<--Select-->") ? "" : nameCol;
+            activeCol = (activeCol == "<--Select-->") ? "" : activeCol;
+
             // TODO: Overwrite file check (do for all?).
 
             TemplateProcessor tempProc = new TemplateProcessor(template, cdList, table, txtSaveLocation.Text, txtIdCols.Text, nameCol, activeCol, txtActiveValue.Text);

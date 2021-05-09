@@ -67,8 +67,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\TableData.cs" />
     <Compile Include="Classes\ColumnData.cs" />
+    <Compile Include="Classes\TableData.cs" />
+    <Compile Include="Classes\CommandParser.cs" />
     <Compile Include="Classes\TemplateInfo.cs" />
     <Compile Include="Classes\TemplateProcessor.cs" />
     <Compile Include="DataLayer\BaseData.cs" />

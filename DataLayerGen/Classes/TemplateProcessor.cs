@@ -14,7 +14,7 @@ namespace DataLayerGen.Classes
         private string TableName = "";
         private string SaveLocation = "";
         private string[] IdColumns = new string[0];
-        private string NameColumns = "";
+        private string NameColumn = "";
         private string ActiveColumn = "";
         private string ActiveValue = "";
         private bool IsActiveValueString = false;
@@ -40,7 +40,7 @@ namespace DataLayerGen.Classes
             TemplateInfo = templateInfo;
             ColDataList = cdList;
             SaveLocation = saveLoc;
-            NameColumns = nameCol;
+            NameColumn = nameCol;
             ActiveColumn = activeCol;
             ActiveValue = activeVal;
 
@@ -95,7 +95,7 @@ namespace DataLayerGen.Classes
             {
                 if (line.Contains("{{SectionIf"))
                 {
-                    ProcessLines(line, output);
+                    ProcessLine(line, output);
                     /*
                     if (SectionIfTrue(line))
                     {
@@ -106,17 +106,26 @@ namespace DataLayerGen.Classes
                 }
                 else
                 {
-                    ProcessLines(line, output);
+                    ProcessLine(line, output);
                 }
             }
         }
 
-        private void ProcessLines(string line, List<string> outputLines)
+        /// <summary>
+        /// ProcessLine() - Process am input line to create the desired output
+        /// </summary>
+        /// <param name="line">Input Line</param>
+        /// <param name="outputLines">Array of Output Lines (to potentially add the result to)</param>
+        private void ProcessLine(string line, List<string> outputLines)
         {
             line = PerformSubstitution(line);
             line = PerformEach(line);
             line = PerformIf(line);
-            outputLines.Add(line);
+
+            if (line != "{{Ignore}}")
+            {
+                outputLines.Add(line);
+            }
         }
 
         /// <summary>
@@ -131,6 +140,8 @@ namespace DataLayerGen.Classes
             line = line.Replace("{{Table}}", TableName);
             line = line.Replace("{{ActiveCol}}", ActiveColumn);
             line = line.Replace("{{ActiveValue}}", (IsActiveValueString) ? $"'{ActiveValue}'" : ActiveValue);
+            line = line.Replace("{{NameColName}}", NameColumn);
+            line = line.Replace("{{NameColType}}", GetNameColSqlType());
             return line;
         }
 
@@ -146,16 +157,34 @@ namespace DataLayerGen.Classes
             return line;
         }
 
+        /// <summary>
+        /// PerformIf() - Process the any "If" commands in the line
+        /// </summary>
+        /// <param name="line">Line to be processed.</param>
+        /// <returns>Output Line</returns>
         private string PerformIf(string line)
         {
+            string resultLine = "{{Ignore}}";
+
             if (line.Contains("{{If|") == false)
             {
                 return line;
             }
 
-            // TODO: Implement "If" Functionality
+            CommandParser cmd = new CommandParser(line);
+            cmd.Parse();
 
-            return line;
+            switch (cmd.Param1.ToLower())
+            {
+                case "activepresent":
+                    resultLine = (ActiveColumn != "") ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
+                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    break;
+                default:
+                    break;
+            }
+
+            return resultLine;
         }
 
         #endregion Processing
@@ -191,6 +220,26 @@ namespace DataLayerGen.Classes
                 }
             }
         }
+
+        /// <summary>
+        /// GetNameColSqlType() - Retrieves the SQL Type for the Name Column.
+        /// </summary>
+        /// <returns>SQL Type for the Name column</returns>
+        private string GetNameColSqlType()
+        {
+            if (NameColumn == "")
+            {
+                return "";
+            }
+
+            ColumnData col = ColDataList.Find(cd => cd.ColumnName == NameColumn);
+            if (col is null)
+            {
+                return "";
+            }
+
+            return col.SqlDataType;
+         }
 
         #endregion Helpers
 

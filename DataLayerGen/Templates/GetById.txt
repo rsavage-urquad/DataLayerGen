@@ -9,7 +9,7 @@ Params:
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
 CREATE PROCEDURE {{Schema}}.{{Table}}GetById
-	{{Each|IdCols|@[[ColName]] [[ColType]]{Last|:,}}}{{If|ActivePresent|,}}
+	{{Each|IdCols|@[[ColName]] [[ColType]][Last|:,]}}
     {{If|ActivePresent|@IncludeInactive bit}}
 AS
 BEGIN

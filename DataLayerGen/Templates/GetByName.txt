@@ -9,7 +9,7 @@ Params:
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
 CREATE PROCEDURE {{Schema}}.{{Table}}GetByName
-	@{{NameColName}} {{Name ColType}}{{If|ActivePresent|,}}
+	@{{NameColName}} {{NameColType}}{{If|ActivePresent|,}}
     {{If|ActivePresent|@IncludeInactive bit}}
 AS
 BEGIN
@@ -17,7 +17,7 @@ BEGIN
 	set nocount on;
 
     select
-    {{Each|ColList|{{ColName}}[Last|:,]}} 
+    {{Each|ColList|[[ColName]][Last|:,]}} 
     from {{Schema}}.{{Table}} with(nolock)
     where {{NameColName}} = @{{NameColName}}
 	{{SectionIf|ActivePresent}}

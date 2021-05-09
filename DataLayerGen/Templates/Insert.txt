@@ -8,7 +8,7 @@ Params:
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
 CREATE PROCEDURE Security.UserIns
-    {{EachOmitId|ColList|@{{ColName}} {{ColType}}[Last|:,]}}   
+    {{Each|ColListExceptId|@[[ColName]] [[ColTyp]][Last|:,]}}   
 AS
 BEGIN
 	set arithabort on;
@@ -22,9 +22,9 @@ BEGIN
 	begin try
 
 		insert into Security.[User] (
-            {{EachOmitId|ColList|{{ColName}}[Last|:,]}}
+            {{Each|ColListExceptId|[[ColName]][Last|:,]}}
 		) values (
-            {{EachOmitId|ColList|@{{ColName}}[Last|:,]}}
+            {{Each|ColListExceptId|@[[ColName]][Last|:,]}}
 		)
 
 		set @Id = SCOPE_IDENTITY();
