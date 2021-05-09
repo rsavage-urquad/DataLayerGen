@@ -3,12 +3,12 @@ Author:
 Date:	{{Date}}
 Desc:	Inserts a {{Table}} row.
 Params: 
-    {{EachOmitId|ColList|@{{ColName}} -}}  
+    {{Each|ColListExceptIds|@[[ColName]] -}}  
 
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
 CREATE PROCEDURE Security.UserIns
-    {{Each|ColListExceptId|@[[ColName]] [[ColTyp]][Last|:,]}}   
+    {{Each|ColListExceptIds|@[[ColName]] [[ColSqlType]][Last|:,]}}   
 AS
 BEGIN
 	set arithabort on;
@@ -22,9 +22,9 @@ BEGIN
 	begin try
 
 		insert into Security.[User] (
-            {{Each|ColListExceptId|[[ColName]][Last|:,]}}
+            {{Each|ColListExceptIds|[[ColName]][Last|:,]}}
 		) values (
-            {{Each|ColListExceptId|@[[ColName]][Last|:,]}}
+            {{Each|ColListExceptIds|@[[ColName]][Last|:,]}}
 		)
 
 		set @Id = SCOPE_IDENTITY();

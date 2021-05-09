@@ -4,6 +4,9 @@ using System.IO;
 
 namespace DataLayerGen.Classes
 {
+    /// <summary>
+    /// TemplateProcessor Class - Processes the Template.
+    /// </summary>
     class TemplateProcessor
     {
         #region Properties
@@ -95,6 +98,7 @@ namespace DataLayerGen.Classes
             {
                 if (line.Contains("{{SectionIf"))
                 {
+                    // TODO: Process "SectionIf"
                     ProcessLine(line, output);
                     /*
                     if (SectionIfTrue(line))
@@ -119,7 +123,7 @@ namespace DataLayerGen.Classes
         private void ProcessLine(string line, List<string> outputLines)
         {
             line = PerformSubstitution(line);
-            line = PerformEach(line);
+            line = PerformEach(line, outputLines);
             line = PerformIf(line);
 
             if (line != "{{Ignore}}")
@@ -145,16 +149,56 @@ namespace DataLayerGen.Classes
             return line;
         }
 
-        private string PerformEach(string line)
+        /// <summary>
+        /// PerformEach() - Process an "Each" command in the line (it it exists).
+        /// </summary>
+        /// <param name="line">Line to process</param>
+        /// <param name="outputLines">Output Lines List (to add items to)</param>
+        /// <returns>Line (if "Each" is not present or "{{Ignore}}" if the "Each" was processed.</returns>
+        private string PerformEach(string line, List<string> outputLines)
         {
+            string workLine;
+            bool isFirst;
+            bool isLast;
+            int itemNum = 0;
+
             if (line.Contains("{{Each|") == false)
             {
                 return line;
             }
 
-            // TODO: Implement "Each" Functionality
+            CommandParser cmd = new CommandParser(line);
+            cmd.Parse();
 
-            return line;
+            List<ColumnData> workColList = getWorkColumnList(cmd.Param1);
+            foreach (ColumnData item in workColList)
+            {
+                itemNum++;
+                isFirst = (itemNum == 1);
+                isLast = (itemNum == workColList.Count);
+
+                workLine = cmd.Prefix + cmd.Param2 + cmd.Suffix;
+                workLine = workLine.Replace("[[ColName]]", item.ColumnName);
+                workLine = workLine.Replace("[[ColSqlType]]", item.SqlDataType);
+
+                if (workLine.Contains("[First|"))
+                {
+                    ModifierParser mp = new ModifierParser(workLine, isFirst);
+                    workLine = mp.Parse();
+                }
+
+                if (workLine.Contains("[Last|"))
+                {
+                    ModifierParser mp = new ModifierParser(workLine, isLast);
+                    workLine = mp.Parse();
+                }
+
+                workLine = PerformIf(workLine);
+
+                outputLines.Add(workLine);
+            }
+
+            return "{{Ignore}}";
         }
 
         /// <summary>
@@ -240,6 +284,44 @@ namespace DataLayerGen.Classes
 
             return col.SqlDataType;
          }
+
+        /// <summary>
+        /// getWorkColumnList() - Returns a list of columns meeting the requested criteria.
+        /// </summary>
+        /// <param name="colInfoRequest">Column Infor to retrieve ("ColList", "IdCols" and "ColListExceptIds")</param>
+        /// <returns>List of relevant Column Data</returns>
+        private List<ColumnData> getWorkColumnList(string colInfoRequest)
+        {
+            List<ColumnData> respList = new List<ColumnData>();
+            bool isIDCol;
+
+            foreach (ColumnData item in ColDataList)
+            {
+                isIDCol = Array.Exists(IdColumns, col => col == item.ColumnName);
+                switch (colInfoRequest.ToLower())
+                {
+                    case "collist":
+                        respList.Add(item);
+                        break;
+                    case "idcols":
+                        if (isIDCol)
+                        {
+                            respList.Add(item);
+                        }
+                        break;
+                    case "collistexceptids":
+                        if (!isIDCol)
+                        {
+                            respList.Add(item);
+                        }
+                        break;
+                    default:
+                        throw new Exception("Unknown \"Each\" Param1");
+                }
+
+            }
+            return respList;
+        }
 
         #endregion Helpers
 

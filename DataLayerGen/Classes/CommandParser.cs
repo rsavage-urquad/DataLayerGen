@@ -35,6 +35,9 @@ namespace DataLayerGen.Classes
 
         #region Processing
 
+        /// <summary>
+        /// Parse() - Parses a Command Line, such as "If" or "Each".
+        /// </summary>
         public void Parse()
         {
             ParserSplit ps = new ParserSplit();
@@ -47,33 +50,5 @@ namespace DataLayerGen.Classes
 
         #endregion Processing
     }
-
-
-    #region ParserSplit
-
-    public class ParserSplit
-    {
-        public string Before { get; set; }
-        public string After { get; set; }
-
-        /// <summary>
-        /// ParserSplit() - Default Constructor
-        /// </summary>
-        public ParserSplit()
-        {
-            Before = "";
-            After = "";
-        }
-
-        public string Split(string source, string delim)
-        {
-            int pos = source.IndexOf(delim);
-            Before = source.Substring(0, pos);
-            After = source.Substring(pos + delim.Length);
-            return Before;
-        }
-    }
-
-    #endregion ParserSplit
 
 }

@@ -220,6 +220,7 @@ namespace DataLayerGen
             if (txtConnStr.Text == "") { errorMsg.Add("Please enter a Connection String"); }
             if (txtSaveLocation.Text == "") { errorMsg.Add("Please select a Save Location"); }
             if (ColDataList.Count == 0) { errorMsg.Add("Please Pick a Table"); }
+            // TODO: Validate ID Columns are in Column Data List
 
             var children = LogicalTreeHelper.GetChildren(panTemplates);
             foreach (var item in children)
