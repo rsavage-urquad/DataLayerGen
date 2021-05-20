@@ -37,5 +37,6 @@
         <Label x:Name="lblSaveLocation" Content="Save Location:" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.675,2.769" Foreground="White"/>
         <Button x:Name="btnSaveFolderDlg" Content="..." HorizontalAlignment="Left" Margin="354,41,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnSaveFolderDlg_Click"/>
         <ComboBox x:Name="cboTableName" HorizontalAlignment="Left" Margin="120,67,0,0" VerticalAlignment="Top" Width="229" ItemsSource="{Binding TableItems}" SelectedItem="{Binding SelectedTableItem}" SelectionChanged="cboTableName_SelectionChanged" />
+        <Button x:Name="btnConnStrWizard" Content="..." HorizontalAlignment="Left" Margin="354,13,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnConnStrWizard_Click" />
     </Grid>
 </Window>

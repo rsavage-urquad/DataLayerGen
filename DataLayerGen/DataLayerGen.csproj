@@ -59,6 +59,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ConnStrWizard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -74,6 +78,9 @@
     <Compile Include="Classes\CommandParser.cs" />
     <Compile Include="Classes\TemplateInfo.cs" />
     <Compile Include="Classes\TemplateProcessor.cs" />
+    <Compile Include="ConnStrWizard.xaml.cs">
+      <DependentUpon>ConnStrWizard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DataLayer\BaseData.cs" />
     <Compile Include="DataLayer\TableDataDl.cs" />
     <Compile Include="DataLayer\ColumnDataDl.cs" />

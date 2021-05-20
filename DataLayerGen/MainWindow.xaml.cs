@@ -32,10 +32,8 @@ namespace DataLayerGen
             PopulateTableInfo();
 
             // HACK: Testing code.  To be removed.
-            txtConnStr.Text = @"Data Source=RSAVAGE-DESKTOP\SQLEXPRESS;Initial Catalog=DataLayerGenDB;User ID=TestUser;Password=test123;";
-            txtSaveLocation.Text = @"C:\Users\rsava\Temp";
-
-            //TODO: Add Connection String Wizard
+            //txtConnStr.Text = @"Data Source=RSAVAGE-DESKTOP\SQLEXPRESS;Initial Catalog=DataLayerGenDB;User ID=TestUser;Password=test123;";
+            //txtSaveLocation.Text = @"C:\Users\rsava\Temp";
         }
 
         #region Events
@@ -95,6 +93,24 @@ namespace DataLayerGen
         {
             PopulateTableInfo();
         }
+
+        /// <summary>
+        /// btnConnStrWizard_Click() - Initiates the process to allow the user to create 
+        /// the Connection String
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnConnStrWizard_Click(object sender, RoutedEventArgs e)
+        {
+            ConnStrWizard cswWindow = new ConnStrWizard();
+            cswWindow.ShowDialog();
+
+            if (cswWindow.CloseType == "Cancel") { return; }
+
+            txtConnStr.Text = cswWindow.GetConnectionString();
+            PopulateTableInfo();
+        }
+
 
         /// <summary>
         /// btnSaveFolderDlg_Click() - Handle the Save Folder Button Click by displaying the dialog to select a 
@@ -299,7 +315,7 @@ namespace DataLayerGen
 
         /// <summary>
         /// PopulateTableColumnCombos() - Populate the Column Data and load the 
-        // Name Column and Active Column ComboBox.
+        /// Name Column and Active Column ComboBox.
         /// </summary>
         /// <param name="tableName">Table Name to retrieve info for.</param>
         private void PopulateTableColumnCombos(string tableName)
