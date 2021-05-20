@@ -34,6 +34,8 @@ namespace DataLayerGen
             // HACK: Testing code.  To be removed.
             txtConnStr.Text = @"Data Source=RSAVAGE-DESKTOP\SQLEXPRESS;Initial Catalog=DataLayerGenDB;User ID=TestUser;Password=test123;";
             txtSaveLocation.Text = @"C:\Users\rsava\Temp";
+
+            //TODO: Add Connection String Wizard
         }
 
         #region Events

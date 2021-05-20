@@ -43,6 +43,14 @@ namespace DataLayerGen.Classes
             ParserSplit ps = new ParserSplit();
             Prefix = ps.Split(InfoToParse, "{{");
             Command = ps.Split(ps.After, "|");
+
+            // "SectionIf" has only Param1
+            if (Command.ToLower() == "sectionif")
+            {
+                Param1 = ps.Split(ps.After, "}}");
+                return;
+            }
+
             Param1 = ps.Split(ps.After, "|");
             Param2 = ps.Split(ps.After, "}}");
             Suffix = ps.After;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace DataLayerGen.Classes
 {
@@ -92,21 +93,22 @@ namespace DataLayerGen.Classes
             return result;
         }
 
+        /// <summary>
+        /// ProcessTemplateLines() - Process the Template Lines and add the results
+        /// to the output collection.
+        /// </summary>
+        /// <param name="lines">Lines to process</param>
+        /// <param name="output">Output collection to add processed lines to</param>
         private void ProcessTemplateLines(List<string> lines, List<string> output)
         {
-            foreach (string line in lines)
+
+            for (int currLine = 0; currLine < lines.Count; currLine++)
             {
+                string line = lines[currLine];
                 if (line.Contains("{{SectionIf"))
                 {
-                    // TODO: Process "SectionIf"
-                    ProcessLine(line, output);
-                    /*
-                    if (SectionIfTrue(line))
-                    {
-                        // If so grab the content
-                        // Recursuive call this method to process the info
-                    }
-                    */
+                    int endline = ProcessSectionIf(lines, output, currLine);
+                    currLine = endline;
                 }
                 else
                 {
@@ -116,7 +118,55 @@ namespace DataLayerGen.Classes
         }
 
         /// <summary>
-        /// ProcessLine() - Process am input line to create the desired output
+        /// ProcessSectionIf() - Process a "SectionIf" directive by a) determining if the Section should be 
+        /// included, b) identifying the lines involved in the Section and c) processing the Section lines.
+        /// </summary>
+        /// <param name="lines">Lines collection to process</param>
+        /// <param name="output">Output (passed to "Processing" method</param>
+        /// <param name="startLine">Line number of "lines" collection to start at.</param>
+        /// <returns>Line that contains the "End of Section" identifier</returns>
+        private int ProcessSectionIf(List<string> lines, List<string> output, int startLine)
+        {
+            bool gotEndOfSection = false;
+            int currLine;
+            List<string> sectionLines = new List<string>();
+            string line = lines[startLine];
+
+            // Determine if condition exists to include section
+            CommandParser cmd = new CommandParser(line);
+            cmd.Parse();
+            bool shouldProcessSection = ((cmd.Param1.ToLower() == "activepresent") && ((ActiveColumn != "")));
+
+            // Load Session Lines (need to locate End of Section even if not including the section.
+            for (currLine = (startLine + 1); currLine < lines.Count; currLine++)
+            {
+                line = lines[currLine];
+
+                if (line.Contains("{{/SectionIf"))
+                {
+                    gotEndOfSection = true;
+                    break;
+                }
+                sectionLines.Add(line);
+            }
+
+            // No End of Section found!
+            if (!gotEndOfSection)
+            {
+                throw new Exception("No {{/SectionIf}}");
+            }
+
+            // If applicable, call the ProcessTemplateLines() method to process the section lines 
+            if (shouldProcessSection)
+            {
+                ProcessTemplateLines(sectionLines, output);
+            }
+
+            return currLine;
+        }
+
+        /// <summary>
+        /// ProcessLine() - Process an input line to create the desired output
         /// </summary>
         /// <param name="line">Input Line</param>
         /// <param name="outputLines">Array of Output Lines (to potentially add the result to)</param>
