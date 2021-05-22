@@ -10,7 +10,7 @@ Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
 CREATE PROCEDURE {{Schema}}.{{Table}}GetById
 	{{Each|IdCols|@[[ColName]] [[ColSqlType]]}}{{If|ActivePresent|,}}
-    {{If|ActivePresent|@IncludeInactive bit}}
+    {{If|ActivePresent|@IncludeInactive bit = 0}}
 AS
 BEGIN
 	set arithabort on;
@@ -23,7 +23,7 @@ BEGIN
 	{{SectionIf|ActivePresent}}
 	and (
 		{{ActiveCol}} = {{ActiveValue}} OR
-		@IncludeInactive = 0
+		@IncludeInactive = 1
 	);
 	{{/SectionIf}}
 END

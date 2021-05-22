@@ -18,9 +18,11 @@ namespace DataLayerGen.Classes
         private string TableName = "";
         private string SaveLocation = "";
         private string[] IdColumns = new string[0];
+        private bool IsIdentityColumn = false;
         private string NameColumn = "";
         private string ActiveColumn = "";
         private string ActiveValue = "";
+        private string InactiveValue = "";
         private bool IsActiveValueString = false;
 
         #endregion Properties
@@ -38,15 +40,19 @@ namespace DataLayerGen.Classes
         /// <param name="nameCol">Name Column</param>
         /// <param name="activeCol">Active Column</param>
         /// <param name="activeVal">Active Value</param>
+        /// <param name="inactiveVal">Inactave Value</param>
+        /// <param name="activeColDataType">Active Column DataType</param>
         public TemplateProcessor(TemplateInfo templateInfo, List<ColumnData> cdList, string table, string saveLoc, string idCols, 
-                                 string nameCol, string activeCol, string activeVal)
+                                 bool isIdentityCol, string nameCol, string activeCol, string activeVal, string inactiveVal, string activeColDataType)
         {
             TemplateInfo = templateInfo;
             ColDataList = cdList;
             SaveLocation = saveLoc;
+            IsIdentityColumn = isIdentityCol;
             NameColumn = nameCol;
             ActiveColumn = activeCol;
             ActiveValue = activeVal;
+            InactiveValue = inactiveVal;
 
             var tableNameInfo = table.Split('.');
             if (tableNameInfo.Length == 2)
@@ -58,8 +64,8 @@ namespace DataLayerGen.Classes
             char[] charSeparators = new char[] { ';', ',' };
             IdColumns = idCols.Split(charSeparators);
 
-            int temp;
-            IsActiveValueString = !(int.TryParse(activeVal, out temp));
+            string workActiveColDataType = activeColDataType.ToLower();
+            IsActiveValueString = ((workActiveColDataType.Contains("char")) || (workActiveColDataType.Contains("text")));
         }
 
         #endregion Constructor
@@ -135,7 +141,7 @@ namespace DataLayerGen.Classes
             // Determine if condition exists to include section
             CommandParser cmd = new CommandParser(line);
             cmd.Parse();
-            bool shouldProcessSection = ((cmd.Param1.ToLower() == "activepresent") && ((ActiveColumn != "")));
+            bool shouldProcessSection = ShouldSectionBeIncluded(cmd);
 
             // Load Session Lines (need to locate End of Section even if not including the section.
             for (currLine = (startLine + 1); currLine < lines.Count; currLine++)
@@ -194,6 +200,7 @@ namespace DataLayerGen.Classes
             line = line.Replace("{{Table}}", TableName);
             line = line.Replace("{{ActiveCol}}", ActiveColumn);
             line = line.Replace("{{ActiveValue}}", (IsActiveValueString) ? $"'{ActiveValue}'" : ActiveValue);
+            line = line.Replace("{{InactiveValue}}", (IsActiveValueString) ? $"'{InactiveValue}'" : InactiveValue);
             line = line.Replace("{{NameColName}}", NameColumn);
             line = line.Replace("{{NameColType}}", GetNameColSqlType());
             return line;
@@ -272,6 +279,14 @@ namespace DataLayerGen.Classes
             {
                 case "activepresent":
                     resultLine = (ActiveColumn != "") ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
+                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    break;
+                case "idisidentity":
+                    resultLine = (IsIdentityColumn) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
+                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    break;
+                case "idisnotidentity":
+                    resultLine = (!IsIdentityColumn) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
                     resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
                     break;
                 default:
@@ -371,6 +386,23 @@ namespace DataLayerGen.Classes
 
             }
             return respList;
+        }
+
+        /// <summary>
+        /// ShouldSectionBeIncluded() - Determines if a section should be included based on the 
+        /// Command Parameter 1 and entered properties
+        /// </summary>
+        /// <param name="cmd">Command Parser object</param>
+        /// <returns>True if section should be included, otherwise false.</returns>
+        private bool ShouldSectionBeIncluded(CommandParser cmd)
+        {
+            bool result = false;
+
+            if (cmd.Param1.ToLower() == "activepresent") { return (ActiveColumn != ""); }
+            if (cmd.Param1.ToLower() == "idisidentity") { return IsIdentityColumn; }
+            if (cmd.Param1.ToLower() == "idisnotidentity") { return !IsIdentityColumn; }
+
+            return result;
         }
 
         #endregion Helpers

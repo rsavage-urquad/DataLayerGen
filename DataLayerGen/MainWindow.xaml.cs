@@ -143,6 +143,16 @@ namespace DataLayerGen
             PopulateTableColumnCombos(selection);
         }
 
+        /// <summary>
+        /// cboActiveColumn_SelectionChanged() - Handle the Table Selection Changed event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cboActiveColumn_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ResetActiveInactiveValues();
+        }
+
         #endregion Events
 
         #region Processing
@@ -163,15 +173,15 @@ namespace DataLayerGen
 
             TemplateInfo template = _TemplateInfoList.First(t => t.Title == templateTitle);
             string table = (tableCbi == null) ? "" : tableCbi.Content.ToString();
-            string nameCol = (nameCbi == null) ? "" : nameCbi.Content.ToString();
-            string activeCol = (activeCbi == null) ? "" : activeCbi.Content.ToString();
+            string nameCol = GetCboSelectedValue(nameCbi);
+            string activeCol = GetCboSelectedValue(activeCbi);
+            string activeColDataType = GetColDataType(activeCol);
+            bool isIdentityCol = (chkIsIdentityCol.IsChecked ?? false);
 
-            nameCol = (nameCol == "<--Select-->") ? "" : nameCol;
-            activeCol = (activeCol == "<--Select-->") ? "" : activeCol;
+            // TODO: (Future) Overwrite file check (do for all?).
 
-            // TODO: Overwrite file check (do for all?).
-
-            TemplateProcessor tempProc = new TemplateProcessor(template, cdList, table, txtSaveLocation.Text, txtIdCols.Text, nameCol, activeCol, txtActiveValue.Text);
+            TemplateProcessor tempProc = new TemplateProcessor(template, cdList, table, txtSaveLocation.Text, txtIdCols.Text, isIdentityCol,  
+                                                               nameCol, activeCol, txtActiveValue.Text, txtInactiveValue.Text, activeColDataType);
             try
             {
                 tempProc.ProcessTemplate();
@@ -238,7 +248,8 @@ namespace DataLayerGen
             if (txtConnStr.Text == "") { errorMsg.Add("Please enter a Connection String"); }
             if (txtSaveLocation.Text == "") { errorMsg.Add("Please select a Save Location"); }
             if (ColDataList.Count == 0) { errorMsg.Add("Please Pick a Table"); }
-            // TODO: Validate ID Columns are in Column Data List
+            IdColumnCheck(errorMsg);
+            ValidateActiveInactiveInfo(errorMsg);
 
             var children = LogicalTreeHelper.GetChildren(panTemplates);
             foreach (var item in children)
@@ -259,6 +270,56 @@ namespace DataLayerGen
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// IdColumnCheck() - Validates that the Id Column(s) exist in the Table
+        /// </summary>
+        /// <param name="errorMsg">Error Message collection (to be added to if column does not exist)</param>
+        private void IdColumnCheck(List<string> errorMsg)
+        {
+            bool gotError = false;
+            string workIdCols = txtIdCols.Text;
+            workIdCols = workIdCols.Replace(" ", "");
+
+            char[] charSeparators = new char[] { ';', ',' };
+            string[] idCols = workIdCols.Split(charSeparators);
+
+            foreach (string idCol in idCols)
+            {
+                ColumnData colInList = ColDataList.FirstOrDefault(s => s.ColumnName == idCol);
+                if (colInList == null)
+                {
+                    gotError = true;
+                    errorMsg.Add($"Id Column \"{idCol}\" does not exist in table");
+                }
+            }
+
+            if (gotError == false)
+            {
+                txtIdCols.Text = workIdCols.Replace('|', ';');
+            }
+        }
+
+        /// <summary>
+        /// ValidateActiveInactiveInfo() - Validates the Active/Inactive entries
+        /// </summary>
+        /// <param name="errorMsg">Error Message collection (to be added to if error found)</param>
+        private void ValidateActiveInactiveInfo(List<string> errorMsg)
+        {
+            ComboBoxItem activeCbi = (ComboBoxItem)cboActiveColumn.SelectedItem;
+            string activeCol = GetCboSelectedValue(activeCbi);
+
+            if (activeCol == "")
+            {
+                if (txtActiveValue.Text.Trim() != "") { errorMsg.Add("If entering an Active Value, an Active Column must be selected.");  }
+                if (txtInactiveValue.Text.Trim() != "") { errorMsg.Add("If entering an Inactive Value, an Active Column must be selected."); }
+            }
+            else
+            {
+                if (txtActiveValue.Text.Trim() == "") { errorMsg.Add("An Active Value must be provided."); }
+                if (txtInactiveValue.Text.Trim() == "") { errorMsg.Add("An Inactive Value must be provided."); }
+            }
         }
 
         /// <summary>
@@ -343,6 +404,8 @@ namespace DataLayerGen
             cboActiveColumn.ItemsSource = ActiveColumnItems;
             cboNameColumn.SelectedIndex = 0;
             cboActiveColumn.SelectedIndex = 0;
+
+            ResetActiveInactiveValues();
         }
 
         /// <summary>
@@ -356,6 +419,15 @@ namespace DataLayerGen
 
             cboNameColumn.ItemsSource = NameColumnItems;
             cboActiveColumn.ItemsSource = ActiveColumnItems;
+        }
+
+        /// <summary>
+        /// ResetActiveInactiveValues() - Resets the Active/Inactive values
+        /// </summary>
+        private void ResetActiveInactiveValues()
+        {
+            txtActiveValue.Text = "";
+            txtInactiveValue.Text = "";
         }
 
         /// <summary>
@@ -412,6 +484,37 @@ namespace DataLayerGen
                 processMessages.ForEach(pm => sb.AppendLine("- " + pm));
             }
             lblConnStr.UpdateLayout();
+        }
+
+        /// <summary>
+        /// GetColDataType() - Retrieves the Active Column's data type
+        /// </summary>
+        /// <param name="activeCol">Active Column</param>
+        /// <returns>Active Column's data type (blank if irrelevant or not found)</returns>
+        private string GetColDataType(string activeCol)
+        {
+            if (activeCol == "") { return ""; }
+            
+            ColumnData colDataItem = ColDataList.FirstOrDefault(s => s.ColumnName == activeCol);
+            if (colDataItem == null)
+            {
+                return "";
+            }
+
+            return colDataItem.DataType;
+        }
+
+        /// <summary>
+        /// GetCboSelectedValue() - Retrueves the Selected Combo Box item.  If the 
+        /// selected value is "<--Select-->", return blank.
+        /// </summary>
+        /// <param name="workCbi">Combo Box Item to analyze</param>
+        /// <returns>Selected value or blank</returns>
+        private string GetCboSelectedValue(ComboBoxItem workCbi)
+        {
+            string result = (workCbi == null) ? "" : workCbi.Content.ToString();
+            result = (result == "<--Select-->") ? "" : result;
+            return result;
         }
 
         #endregion Helpers

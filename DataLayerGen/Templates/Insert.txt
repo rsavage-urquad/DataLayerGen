@@ -3,11 +3,17 @@ Author:
 Date:	{{Date}}
 Desc:	Inserts a {{Table}} row.
 Params: 
+	{{SectionIf|IdIsNotIdentity}}
+	{{Each|IdCols|@[[ColName]] -}}
+	{{/SectionIf}}
     {{Each|ColListExceptIds|@[[ColName]] -}}  
 
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
-CREATE PROCEDURE Security.UserIns
+CREATE PROCEDURE  {{Schema}}.{{Table}}Ins
+	{{SectionIf|IdIsNotIdentity}}
+	{{Each|IdCols|@[[ColName]] [[ColSqlType]],}}
+	{{/SectionIf}}
     {{Each|ColListExceptIds|@[[ColName]] [[ColSqlType]][Last|:,]}}   
 AS
 BEGIN
@@ -21,14 +27,22 @@ BEGIN
 
 	begin try
 
-		insert into Security.[User] (
+		insert into {{Schema}}.{{Table}} (
+			{{SectionIf|IdIsNotIdentity}}
+			{{Each|IdCols|[[ColName]],}}
+			{{/SectionIf}}
             {{Each|ColListExceptIds|[[ColName]][Last|:,]}}
 		) values (
+			{{SectionIf|IdIsNotIdentity}}
+			{{Each|IdCols|@[[ColName]],}}
+			{{/SectionIf}}
             {{Each|ColListExceptIds|@[[ColName]][Last|:,]}}
 		)
 
+		{{SectionIf|IdIsIdentity}}
 		set @Id = SCOPE_IDENTITY();
-
+		
+		{{/SectionIf}}
 		commit tran {{Table}}Ins;
 		set @RetCode = 0;
 	end try
@@ -39,7 +53,9 @@ BEGIN
 	end catch
 
 	select 
+	{{SectionIf|IdIsIdentity}}
 	@Id as Id,
+	{{/SectionIf}}
 	@RetCode as RetCode;
 END
 go
