@@ -16,5 +16,29 @@
     "title": "Insert",
     "templateFilename": "Insert.txt",
     "outputName": "{{Schema}}.{{Table}}Ins.sql"
+  },
+  {
+    "templateId": "Update",
+    "title": "Update",
+    "templateFilename": "Update.txt",
+    "outputName": "{{Schema}}.{{Table}}Upd.sql"
+  },
+  {
+    "templateId": "Delete",
+    "title": "Delete",
+    "templateFilename": "Delete.txt",
+    "outputName": "{{Schema}}.{{Table}}Del.sql"
+  },
+  {
+    "templateId": "ToggleActive",
+    "title": "Toggle Active Indicator",
+    "templateFilename": "ToggleActive.txt",
+    "outputName": "{{Schema}}.{{Table}}ToggleActive.sql"
+  },
+  {
+    "templateId": "EntityClass",
+    "title": "Entity C# Class",
+    "templateFilename": "EntityClass.txt",
+    "outputName": "{{Table}}.cs"
   }
 ]

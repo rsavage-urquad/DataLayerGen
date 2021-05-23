@@ -1,0 +1,48 @@
+/* -------------------------------------------------------------------------------------------------
+Author:	
+Date:	{{Date}}
+Desc:	Delete a row for the requested Id(s).
+Params:
+	{{Each|IdCols|@[[ColName]] - Id to retrieve.}}
+
+Results:
+	RetCode
+		0 = Success
+		1 = No rows updated
+		99 = DB Exception
+
+Change Log: When, Who: What
+------------------------------------------------------------------------------------------------- */
+CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}Del
+    {{Each|IdCols|@[[ColName]] [[ColSqlType]][Last|:,]}}   
+AS
+BEGIN
+	set arithabort on;
+	set nocount on;
+
+	declare @RetCode int;
+	declare @rowCount int;
+
+	set @RetCode = 0;
+	begin try
+		begin tran {{Table}}Del;
+
+		delete {{Schema}}.{{Table}}
+		{{Each|IdCols|[First|where:and] [[ColName]] = @[[ColName]][Last|;:]}}
+
+		set @rowCount = @@ROWCOUNT;
+
+		commit tran {{Table}}Del;
+
+		if @rowCount = 0
+		begin
+			set @RetCode = 1;
+		end
+	end try
+	begin catch
+        rollback tran {{Table}}Del;
+		set @RetCode = 99;
+	end catch
+
+	select @RetCode as RetCode;
+END

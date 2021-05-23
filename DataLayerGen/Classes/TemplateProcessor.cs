@@ -237,6 +237,8 @@ namespace DataLayerGen.Classes
                 workLine = cmd.Prefix + cmd.Param2 + cmd.Suffix;
                 workLine = workLine.Replace("[[ColName]]", item.ColumnName);
                 workLine = workLine.Replace("[[ColSqlType]]", item.SqlDataType);
+                workLine = workLine.Replace("[[ColCodeType]]", DataTypeLookup.GetCodeDataType(item));
+                workLine = workLine.Replace("[[ColCodeDefaultValue]]", DataTypeLookup.GetCodeDefaultValue(item));
 
                 if (workLine.Contains("[First|"))
                 {
@@ -279,6 +281,14 @@ namespace DataLayerGen.Classes
             {
                 case "activepresent":
                     resultLine = (ActiveColumn != "") ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
+                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    break;
+                case "activeisstring":
+                    resultLine = (IsActiveValueString) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
+                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    break;
+                case "activeisnotstring":
+                    resultLine = (!IsActiveValueString) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
                     resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
                     break;
                 case "idisidentity":
@@ -399,6 +409,8 @@ namespace DataLayerGen.Classes
             bool result = false;
 
             if (cmd.Param1.ToLower() == "activepresent") { return (ActiveColumn != ""); }
+            if (cmd.Param1.ToLower() == "activeisstring") { return (IsActiveValueString); }
+            if (cmd.Param1.ToLower() == "activeisnotstring") { return (!IsActiveValueString); }
             if (cmd.Param1.ToLower() == "idisidentity") { return IsIdentityColumn; }
             if (cmd.Param1.ToLower() == "idisnotidentity") { return !IsIdentityColumn; }
 

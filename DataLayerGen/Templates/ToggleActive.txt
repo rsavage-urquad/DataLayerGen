@@ -1,0 +1,64 @@
+/* -------------------------------------------------------------------------------------------------
+Author:	
+Date:	{{Date}}
+Desc:	Toggles the Active Indicator of a row for the requested Id(s).
+Params:
+	{{Each|ColList|[[ColName]] - }} 
+
+Results:
+	RetCode
+		0 = Success
+		1 = No rows updated
+		99 = DB Exception
+
+Change Log: When, Who: What
+------------------------------------------------------------------------------------------------- */
+CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}ToggleActive
+    {{Each|ColList|@[[ColName]] [[ColSqlType]][Last|:,]}}   
+AS
+BEGIN
+	set arithabort on;
+	set nocount on;
+
+	declare @RetCode int;
+	declare @rowCount int;
+	{{If|ActiveIsString|declare @ActiveVal varchar(10);}}
+	{{If|ActiveIsNotString|declare @ActiveVal bit;}}
+
+	select @ActiveVal = {{ActiveCol}}
+	from {{Schema}}.{{Table}} with(nolock)
+	{{Each|IdCols|[First|where:and] [[ColName]] = @[[ColName]][Last|;:]}}
+
+	if @ActiveVal = {{ActiveValue}}
+	begin
+		set @ActiveVal = {{InactiveValue}}
+	end
+	else
+	begin
+		set @ActiveVal = {{ActiveValue}}
+	end
+
+	set @RetCode = 0;
+	begin try
+		begin tran {{Table}}ToggleActive;
+
+		update {{Schema}}.{{Table}} set
+		{{ActiveCol}} = @ActiveVal
+		{{Each|IdCols|[First|where:and] [[ColName]] = @[[ColName]][Last|;:]}}
+
+		set @rowCount = @@ROWCOUNT;
+
+		commit tran {{Table}}ToggleActive;
+
+		if @rowCount = 0
+		begin
+			set @RetCode = 1;
+		end
+	end try
+	begin catch
+        rollback tran {{Table}}ToggleActive;
+		set @RetCode = 99;
+	end catch
+
+	select @RetCode as RetCode;
+END

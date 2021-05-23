@@ -8,7 +8,7 @@ Params:
 
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
-CREATE PROCEDURE {{Schema}}.{{Table}}GetById
+CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}GetById
 	{{Each|IdCols|@[[ColName]] [[ColSqlType]]}}{{If|ActivePresent|,}}
     {{If|ActivePresent|@IncludeInactive bit = 0}}
 AS

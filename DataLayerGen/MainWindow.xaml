@@ -40,6 +40,6 @@
         <Button x:Name="btnConnStrWizard" Content="..." HorizontalAlignment="Left" Margin="354,13,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnConnStrWizard_Click" TabIndex="1" />
         <TextBox x:Name="txtInactiveValue" HorizontalAlignment="Left" Height="23" Margin="596,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="47" RenderTransformOrigin="0.489,-0.565" TabIndex="10"/>
         <Label x:Name="lblInactiveValue" Content="Inactive Value:" HorizontalAlignment="Left" Margin="506,146,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <CheckBox x:Name="chkIsIdentityCol" Content="Is Identity Column?" HorizontalAlignment="Left" Margin="506,97,0,0" VerticalAlignment="Top" Foreground="White" TabIndex="6"/>
+        <CheckBox x:Name="chkIsIdentityCol" Content="Is Identity Column?" HorizontalAlignment="Left" Margin="506,97,0,0" VerticalAlignment="Top" Foreground="White" TabIndex="6" IsChecked="True"/>
     </Grid>
 </Window>

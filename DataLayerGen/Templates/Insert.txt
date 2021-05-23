@@ -10,7 +10,7 @@ Params:
 
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
-CREATE PROCEDURE  {{Schema}}.{{Table}}Ins
+CREATE OR ALTER PROCEDURE  {{Schema}}.{{Table}}Ins
 	{{SectionIf|IdIsNotIdentity}}
 	{{Each|IdCols|@[[ColName]] [[ColSqlType]],}}
 	{{/SectionIf}}
@@ -23,9 +23,8 @@ BEGIN
 	declare @RetCode int;
 	declare @Id int = 0;
 
-    begin tran {{Table}}Ins;
-
 	begin try
+	    begin tran {{Table}}Ins;
 
 		insert into {{Schema}}.{{Table}} (
 			{{SectionIf|IdIsNotIdentity}}
@@ -37,7 +36,7 @@ BEGIN
 			{{Each|IdCols|@[[ColName]],}}
 			{{/SectionIf}}
             {{Each|ColListExceptIds|@[[ColName]][Last|:,]}}
-		)
+		);
 
 		{{SectionIf|IdIsIdentity}}
 		set @Id = SCOPE_IDENTITY();
@@ -46,7 +45,6 @@ BEGIN
 		commit tran {{Table}}Ins;
 		set @RetCode = 0;
 	end try
-
 	begin catch
         rollback tran {{Table}}Ins;
 		set @RetCode = 99;
@@ -58,4 +56,3 @@ BEGIN
 	{{/SectionIf}}
 	@RetCode as RetCode;
 END
-go

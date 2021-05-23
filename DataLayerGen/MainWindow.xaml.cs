@@ -184,7 +184,7 @@ namespace DataLayerGen
                                                                nameCol, activeCol, txtActiveValue.Text, txtInactiveValue.Text, activeColDataType);
             try
             {
-                tempProc.ProcessTemplate();
+                result = tempProc.ProcessTemplate();
             }
             catch (Exception ex)
             {
@@ -477,11 +477,12 @@ namespace DataLayerGen
             }
             else
             {
-                string resultMsg = "Processing completed with issues";
+                string resultMsg = "Processing completed with errors";
                 lblConsole.Content = resultMsg;
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine($"{resultMsg}:");
                 processMessages.ForEach(pm => sb.AppendLine("- " + pm));
+                MessageBox.Show(sb.ToString(), "Processing Completed with Error", MessageBoxButton.OK);
             }
             lblConnStr.UpdateLayout();
         }

@@ -1,0 +1,52 @@
+/* -------------------------------------------------------------------------------------------------
+Author:	
+Date:	{{Date}}
+Desc:	Updates a row for the requested Id(s).
+Params:
+	{{Each|ColList|[[ColName]] - }} 
+
+Results:
+	RetCode
+		0 = Success
+		1 = No rows updated
+		99 = DB Exception
+
+Change Log: When, Who: What
+------------------------------------------------------------------------------------------------- */
+CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}Upd
+    {{Each|ColList|@[[ColName]] [[ColSqlType]][Last|:,]}}   
+AS
+BEGIN
+	set arithabort on;
+	set nocount on;
+
+	declare @RetCode int;
+	declare @rowCount int;
+
+	set @RetCode = 0;
+	begin try
+		begin tran {{Table}}Upd;
+
+		update {{Schema}}.{{Table}} set
+		{{SectionIf|IdIsNotIdentity}}
+		{{Each|IdCols|[[ColName]] = @[[ColName]],}}
+		{{/SectionIf}}
+		{{Each|ColListExceptIds|[[ColName]] = @[[ColName]][Last|:,]}} 
+		{{Each|IdCols|[First|where:and] [[ColName]] = @[[ColName]][Last|;:]}}
+
+		set @rowCount = @@ROWCOUNT;
+
+		commit tran {{Table}}Upd;
+
+		if @rowCount = 0
+		begin
+			set @RetCode = 1;
+		end
+	end try
+	begin catch
+        rollback tran {{Table}}Upd;
+		set @RetCode = 99;
+	end catch
+
+	select @RetCode as RetCode;
+END
