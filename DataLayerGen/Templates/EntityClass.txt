@@ -1,3 +1,5 @@
+using System;
+
 namespace <To Be Populated>
 {
     /// <summary>
@@ -19,7 +21,7 @@ namespace <To Be Populated>
         /// </summary>
         public {{Table}}()
         {
-            {{Each|ColList|[[ColName]]  = [[ColCodeDefaultValue]]}}   
+            {{Each|ColList|[[ColName]] = [[ColCodeDefaultValue]];}}   
         }
 
         #endregion Constructor(s)
