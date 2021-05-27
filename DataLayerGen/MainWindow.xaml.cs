@@ -405,6 +405,8 @@ namespace DataLayerGen
             cboNameColumn.SelectedIndex = 0;
             cboActiveColumn.SelectedIndex = 0;
 
+            txtIdCols.Text = "";
+            chkIsIdentityCol.IsChecked = true;
             ResetActiveInactiveValues();
         }
 
