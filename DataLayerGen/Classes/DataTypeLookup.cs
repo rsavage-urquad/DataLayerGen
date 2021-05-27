@@ -41,11 +41,11 @@ namespace DataLayerGen.Classes
             _TypeXref.Add("decimal", new CodeDataTypeInfo("decimal", true, "0.0"));
             _TypeXref.Add("smallmoney", new CodeDataTypeInfo("decimal", true, "0.0"));
             _TypeXref.Add("money", new CodeDataTypeInfo("decimal", true, "0.0"));
-            _TypeXref.Add("datetime", new CodeDataTypeInfo("DateTime", true, "DateTime.DateTime.MinValue"));
-            _TypeXref.Add("datetime2", new CodeDataTypeInfo("DateTime", true, "DateTime.DateTime.MinValue"));
-            _TypeXref.Add("smalldatetime", new CodeDataTypeInfo("DateTime", true, "DateTime.DateTime.MinValue"));
-            _TypeXref.Add("date", new CodeDataTypeInfo("DateTime", true, "DateTime.DateTime.MinValue"));
-            _TypeXref.Add("time", new CodeDataTypeInfo("DateTime", true, "DateTime.DateTime.MinValue"));
+            _TypeXref.Add("datetime", new CodeDataTypeInfo("DateTime", true, "DateTime.MinValue"));
+            _TypeXref.Add("datetime2", new CodeDataTypeInfo("DateTime", true, "DateTime.MinValue"));
+            _TypeXref.Add("smalldatetime", new CodeDataTypeInfo("DateTime", true, "DateTime.MinValue"));
+            _TypeXref.Add("date", new CodeDataTypeInfo("DateTime", true, "DateTime.MinValue"));
+            _TypeXref.Add("time", new CodeDataTypeInfo("DateTime", true, "DateTime.MinValue"));
         }
 
         #endregion Constructor(s)
