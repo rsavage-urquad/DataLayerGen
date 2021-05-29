@@ -6,10 +6,10 @@
     "outputName": "{{Schema}}.{{Table}}GetById.sql"
   },
   {
-    "templateId": "GetByName",
-    "title": "Get By Name",
-    "templateFilename": "GetByName.txt",
-    "outputName": "{{Schema}}.{{Table}}GetByName.sql"
+    "templateId": "ListByName",
+    "title": "List By Name",
+    "templateFilename": "ListByName.txt",
+    "outputName": "{{Schema}}.{{Table}}ListByName.sql"
   },
   {
     "templateId": "Insert",
@@ -40,5 +40,11 @@
     "title": "Entity C# Class",
     "templateFilename": "EntityClass.txt",
     "outputName": "{{Table}}.cs"
+  },
+  {
+    "templateId": "DataLayerClass",
+    "title": "Data Layer C# Class",
+    "templateFilename": "DataLayerClass.txt",
+    "outputName": "{{Table}}Dl.cs"
   }
 ]

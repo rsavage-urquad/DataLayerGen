@@ -1,0 +1,310 @@
+using System;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+
+namespace <To Be Populated>
+{
+    class {{Table}}Dl
+    {
+        #region Public Methods
+
+        /// <summary>
+        /// {{Table}}GetById() - Retrieve the requested item by Id and retuens a populated object.
+        /// </summary>
+        /// <param name="cs">Connection String</param>
+        {{Each|IdCols|/// <param name="[[CamelColName]]">Id of item to retrieve</param>}}
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be returned? (true/false)</param>
+        {{/SectionIf}}
+        /// <returns>Populated object or null</returns>
+        public {{Table}} {{Table}}GetById(string cs, {{CamelIdColParameters}}{{If|ActivePresent|, bool includeInactive = false}})
+        {
+            {{Table}} result = null;
+
+            // Prepare and Call the SP
+            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}GetById"))
+            {
+                // Add Parameters
+                {{Each|IdCols|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+                {{SectionIf|ActivePresent}}
+                sql.SetParameter("IncludeInactive", includeInactive);
+                {{/SectionIf}}
+
+                using (var table = sql.GetTable())
+                {
+                    // Check for data
+                    if (table != null)
+                    {
+                        foreach (DataRow dr in table.Rows)  // Should only be one
+                        {
+                            PopulateObject(dr, result);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// {{Table}}ListByName() - Returns a list of entities for the requested Name
+        /// </summary>
+        /// <param name="cs">Connection String</param>
+        /// <param name="{{CamelNameColName}}">{{Table}} name to retrieve</param>
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be returned? (true/false)</param>
+        {{/SectionIf}}
+        /// <returns></returns>
+        public List<{{Table}}> {{Table}}ListByName(string cs, {{NameColCodeType}} {{CamelNameColName}}{{If|ActivePresent|, bool includeInactive = false}})
+        {
+            List<{{Table}}> results = new List<{{Table}}>();
+
+            // Prepare and Call the SP
+            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}ListByName"))
+            {
+                // Add Parameters
+                sql.SetParameter("{{NameColName}}", {{CamelNameColName}});
+                {{SectionIf|ActivePresent}}
+                sql.SetParameter("IncludeInactive", includeInactive);
+                {{/SectionIf}}
+
+                using (var table = sql.GetTable())
+                {
+                    if (table != null)
+                    {
+                        foreach (DataRow dr in table.Rows)
+                        {
+                            {{Table}} obj = new {{Table}}();
+                            PopulateObject(dr, obj);
+                            results.Add(obj);
+                        }
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// {{Table}}Insert() - Inserts an Entity Object
+        /// </summary>
+        /// <param name="{{CamelTable}}Obj">{{Table}} object containing data to insert</param>
+        /// <returns>
+        ///     0 = Success
+        ///     98 - No results
+        ///     99 = Exception during Insert
+        /// </returns>
+        public int {{Table}}Insert(string cs, {{Table}} {{CamelTable}}Obj)
+        {
+            int retCode = 0;
+            int insertedId = 0;
+
+            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}Ins"))
+            {
+	            {{SectionIf|IdIsNotIdentity}}
+	            {{Each|IdCols|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+	            {{/SectionIf}}
+                {{Each|ColListExceptIds|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+
+                using (var table = sql.GetTable())
+                {
+                    try
+                    {
+                        // Check for data
+                        if (table != null)
+                        {
+                            // Should only be 1 row
+                            foreach (DataRow dr in table.Rows)
+                            {
+                                {{SectionIf|IdIsIdentity}}
+                                insertedId = dr.Field<int>("Id");
+                                {{/SectionIf}}
+                                retCode = dr.Field<int>("RetCode");
+                            }
+                        }
+                        else
+                        {
+                            retCode = 98;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        retCode = 99;
+                    }
+                }
+            }
+
+            {{SectionIf|IdIsIdentity}}
+            // Set the inserted Id if result was success.
+            if (retCode == 0)
+            {
+                {{Each|IdCols|{{CamelTable}}Obj.[[ColName]] = insertedId;}}
+            }
+            {{/SectionIf}}
+
+            return retCode;
+        }
+
+        /// <summary>
+        /// {{Table}}Update() - Updates an Entity Object
+        /// </summary>
+        /// <param name="cs">Connection String</param>
+        /// <param name="{{CamelTable}}Obj">{{Table}} object containing data to update</param>
+        /// <returns>
+        ///     0 = Success
+        ///     1 = Update did not occur (affected rows = 0)
+        ///     98 = No results
+        ///     99 = Exception during Update
+        /// </returns>
+        public int {{Table}}Update(string cs, {{Table}} {{CamelTable}}Obj)
+        {
+            int retCode = 0;
+
+            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}pd"))
+            {
+                {{Each|ColList|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+
+                using (var table = sql.GetTable())
+                {
+                    try
+                    {
+                        // Check for data
+                        if (table != null)
+                        {
+                            foreach (DataRow dr in table.Rows)      // Should only be 1 row
+                            {
+                                retCode = dr.Field<int>("ResultCode");
+                            }
+                        }
+                        else
+                        {
+                            retCode = 98;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        retCode = 99;
+                    }
+                }
+            }
+
+            return retCode;
+        }
+
+        /// <summary>
+        /// {{Table}}Delete() - Deletes an Entity Object
+        /// </summary>
+        /// <param name="cs">Connection String</param>
+        {{Each|IdCols|/// <param name="[[CamelColName]]">Id of item to retrieve</param>}}
+        /// <returns>
+        ///     0 = Success
+        ///     1 = Delete did not occur (affected rows = 0)
+        ///     98 = No results
+        ///     99 = Exception during Delete
+        /// </returns>
+        public int {{Table}}Delete(string cs, {{CamelIdColParameters}})
+        {
+            int retCode = 0;
+
+            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}Del"))
+            {
+                {{Each|IdCols|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+
+                using (var table = sql.GetTable())
+                {
+                    try
+                    {
+                        // Check for data
+                        if (table != null)
+                        {
+                            foreach (DataRow dr in table.Rows)      // Should only be 1 row
+                            {
+                                retCode = dr.Field<int>("ResultCode");
+                            }
+                        }
+                        else
+                        {
+                            retCode = 98;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        retCode = 99;
+                    }
+                }
+            }
+
+            return retCode;
+        }
+
+        {{SectionIf|ActivePresent}}
+        /// <summary>
+        /// {{Table}}ToggleActive() - Updates the Entity by toggling the Active indicator.
+        /// </summary>
+        /// <param name="cs">Connection String</param>
+        {{Each|IdCols|/// <param name="[[CamelColName]]">Id of item to retrieve</param>}}
+        /// <param name="requestedBy">User requesting activity</param>
+        /// <returns>
+        ///     0 = Success
+        ///     1 = Request Id does not exist
+        ///     98 = No results
+        ///     99 = Exception during Toggle
+        /// </returns>
+        public int {{Table}}ToggleActive(string cs, {{CamelIdColParameters}}, string requestedBy)
+        {
+            int retCode = 0;
+
+            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}ToggleActive"))
+            {
+                {{Each|IdCols|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+                sql.SetParameter("RequestedBy", requestedBy);
+
+                using (var table = sql.GetTable())
+                {
+                    try
+                    {
+                        // Check for data
+                        if (table != null)
+                        {
+                            foreach (DataRow dr in table.Rows)      // Should only be 1 row
+                            {
+                                retCode = dr.Field<int>("ResultCode");
+                            }
+                        }
+                        else
+                        {
+                            retCode = 98;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        retCode = 99;
+                    }
+                }
+            }
+
+            return retCode;
+        }
+
+        {{/SectionIf}}
+        #endregion Public Methods
+
+        #region Private/Protected Methods
+
+        /// <summary>
+        /// PopulateObject() - Populate an object with the supplied data.
+        /// </summary>
+        /// <param name="dr">Row from database</param>
+        /// <param name="obj">{{Table}} Object to be populated.</param>
+        protected void PopulateObject(DataRow dr, {{Table}} obj)
+        {
+            {{Each|ColList| obj.[[ColName]] = dr.Field<[[ColCodeType]]>("[[ColName]]");}}
+        }
+
+        #endregion Private/Protected Methods
+
+    }
+}

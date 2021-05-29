@@ -17,7 +17,7 @@ BEGIN
 	set nocount on;
 
     select
-    {{Each|ColList|[[ColName]][Last|:,]}} 
+    {{Each|ColList|[[ColName]][Last|:,]}}
     from {{Schema}}.{{Table}} with(nolock)
 	{{Each|IdCols|[First|where:and] [[ColName]] = @[[ColName]]}}
 	{{SectionIf|ActivePresent}}

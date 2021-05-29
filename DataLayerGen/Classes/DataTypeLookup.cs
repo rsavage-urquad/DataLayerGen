@@ -85,12 +85,11 @@ namespace DataLayerGen.Classes
         public static string GetCodeDefaultValue(ColumnData cd)
         {
             string workSqlDataType = cd.DataType.ToLower();
-            bool isCodelDataTypeNullable = false;
             string result = "undefined";
 
             if (_TypeXref.ContainsKey(workSqlDataType))
             {
-                isCodelDataTypeNullable = _TypeXref[workSqlDataType].CodeDataTypeIsNullable;
+                bool isCodelDataTypeNullable = _TypeXref[workSqlDataType].CodeDataTypeIsNullable;
                 result = ((isCodelDataTypeNullable) && (cd.IsNullable)) ? "null" : _TypeXref[workSqlDataType].DefaultValue;
             }
 

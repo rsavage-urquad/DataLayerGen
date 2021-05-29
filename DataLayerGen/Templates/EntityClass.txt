@@ -10,7 +10,7 @@ namespace <To Be Populated>
 
         #region Properties
 
-        {{Each|ColList|public [[ColCodeType]] [[ColName]] { get; set; }}}   
+        {{Each|ColList|public [[ColCodeType]] [[ColName]] { get; set; }}}
 
         #endregion Properties
 
@@ -21,7 +21,7 @@ namespace <To Be Populated>
         /// </summary>
         public {{Table}}()
         {
-            {{Each|ColList|[[ColName]] = [[ColCodeDefaultValue]];}}   
+            {{Each|ColList|[[ColName]] = [[ColCodeDefaultValue]];}}
         }
 
         #endregion Constructor(s)

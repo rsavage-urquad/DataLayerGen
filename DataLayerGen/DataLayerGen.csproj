@@ -126,7 +126,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Templates\GetByName.txt">
+    <None Include="Templates\ListByName.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -152,6 +152,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Templates\EntityClass.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Templates\DataLayerClass.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

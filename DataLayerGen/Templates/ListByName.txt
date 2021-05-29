@@ -1,14 +1,14 @@
 /* -------------------------------------------------------------------------------------------------
 Author:	
 Date:	{{Date}}
-Desc:	Retrieves the row for the requested name.
+Desc:	Retrieves the row(s) for the requested name.
 Params:
 	@{{NameColName}} - Name to retrieve.
     {{If|ActivePresent|@IncludeInactive - Should inactive Rows be returned?}}
 
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
-CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}GetByName
+CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}ListByName
 	@{{NameColName}} {{NameColType}}{{If|ActivePresent|,}}
     {{If|ActivePresent|@IncludeInactive bit = 0}}
 AS
@@ -17,7 +17,7 @@ BEGIN
 	set nocount on;
 
     select
-    {{Each|ColList|[[ColName]][Last|:,]}} 
+    {{Each|ColList|[[ColName]][Last|:,]}}
     from {{Schema}}.{{Table}} with(nolock)
     where {{NameColName}} = @{{NameColName}}
 	{{SectionIf|ActivePresent}}

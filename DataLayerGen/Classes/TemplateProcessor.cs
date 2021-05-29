@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace DataLayerGen.Classes
 {
@@ -198,11 +199,18 @@ namespace DataLayerGen.Classes
             line = line.Replace("{{Date}}", DateTime.Now.ToString("M/d/yyyy"));
             line = line.Replace("{{Schema}}", SchemaName);
             line = line.Replace("{{Table}}", TableName);
+            line = line.Replace("{{CamelTable}}", GetCamelCase(TableName));
             line = line.Replace("{{ActiveCol}}", ActiveColumn);
+            line = line.Replace("{{ActiveColType}}", GetSpecialColType("Active", "SQL"));
+            line = line.Replace("{{ActiveColCodeType}}", GetSpecialColType("Active", "Code"));
             line = line.Replace("{{ActiveValue}}", (IsActiveValueString) ? $"'{ActiveValue}'" : ActiveValue);
             line = line.Replace("{{InactiveValue}}", (IsActiveValueString) ? $"'{InactiveValue}'" : InactiveValue);
             line = line.Replace("{{NameColName}}", NameColumn);
-            line = line.Replace("{{NameColType}}", GetNameColSqlType());
+            line = line.Replace("{{CamelNameColName}}",GetCamelCase(NameColumn));
+            line = line.Replace("{{NameColType}}", GetSpecialColType("Name", "SQL"));
+            line = line.Replace("{{NameColCodeType}}", GetSpecialColType("Name", "Code"));
+            line = line.Replace("{{CamelIdColParameters}}", CamelIdColParameters());
+
             return line;
         }
 
@@ -227,7 +235,7 @@ namespace DataLayerGen.Classes
             CommandParser cmd = new CommandParser(line);
             cmd.Parse();
 
-            List<ColumnData> workColList = getWorkColumnList(cmd.Param1);
+            List<ColumnData> workColList = GetWorkColumnList(cmd.Param1);
             foreach (ColumnData item in workColList)
             {
                 itemNum++;
@@ -236,9 +244,11 @@ namespace DataLayerGen.Classes
 
                 workLine = cmd.Prefix + cmd.Param2 + cmd.Suffix;
                 workLine = workLine.Replace("[[ColName]]", item.ColumnName);
+                workLine = workLine.Replace("[[CamelColName]]", GetCamelCase(item.ColumnName));
                 workLine = workLine.Replace("[[ColSqlType]]", item.SqlDataType);
                 workLine = workLine.Replace("[[ColCodeType]]", DataTypeLookup.GetCodeDataType(item));
                 workLine = workLine.Replace("[[ColCodeDefaultValue]]", DataTypeLookup.GetCodeDefaultValue(item));
+
 
                 if (workLine.Contains("[First|"))
                 {
@@ -267,7 +277,8 @@ namespace DataLayerGen.Classes
         /// <returns>Output Line</returns>
         private string PerformIf(string line)
         {
-            string resultLine = "{{Ignore}}";
+            string resultLine;
+            bool isIfConditionTrue;
 
             if (line.Contains("{{If|") == false)
             {
@@ -280,28 +291,27 @@ namespace DataLayerGen.Classes
             switch (cmd.Param1.ToLower())
             {
                 case "activepresent":
-                    resultLine = (ActiveColumn != "") ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
-                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    isIfConditionTrue = (ActiveColumn != "");
                     break;
                 case "activeisstring":
-                    resultLine = (IsActiveValueString) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
-                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    isIfConditionTrue = (IsActiveValueString);
                     break;
                 case "activeisnotstring":
-                    resultLine = (!IsActiveValueString) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
-                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    isIfConditionTrue = (!IsActiveValueString);
                     break;
                 case "idisidentity":
-                    resultLine = (IsIdentityColumn) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
-                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    isIfConditionTrue = (IsIdentityColumn);
                     break;
                 case "idisnotidentity":
-                    resultLine = (!IsIdentityColumn) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix;
-                    resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+                    isIfConditionTrue = (!IsIdentityColumn);
                     break;
                 default:
+                    isIfConditionTrue = false;
                     break;
             }
+
+            resultLine = (isIfConditionTrue) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix + cmd.Suffix;
+            resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
 
             return resultLine;
         }
@@ -341,23 +351,26 @@ namespace DataLayerGen.Classes
         }
 
         /// <summary>
-        /// GetNameColSqlType() - Retrieves the SQL Type for the Name Column.
+        /// GetSpecialColType() - Retrieves the SQL or CodeType for s special column.
         /// </summary>
-        /// <returns>SQL Type for the Name column</returns>
-        private string GetNameColSqlType()
+        /// <param name="specialCol">Special Column (Name or Active)</param>
+        /// <param name="colType">Column Type (SQL or Code)</param>
+        /// <returns>SQL or Data Type for the Name or Active column</returns>
+        private string GetSpecialColType(string specialCol, string colType)
         {
-            if (NameColumn == "")
+            string workCol = (specialCol.ToLower() == "name") ? NameColumn : ActiveColumn;
+            if (workCol == "")
             {
                 return "";
             }
 
-            ColumnData col = ColDataList.Find(cd => cd.ColumnName == NameColumn);
+            ColumnData col = ColDataList.Find(cd => cd.ColumnName == workCol);
             if (col is null)
             {
                 return "";
             }
 
-            return col.SqlDataType;
+            return (colType.ToLower() == "sql") ? col.SqlDataType : DataTypeLookup.GetCodeDataType(col);
          }
 
         /// <summary>
@@ -365,7 +378,7 @@ namespace DataLayerGen.Classes
         /// </summary>
         /// <param name="colInfoRequest">Column Infor to retrieve ("ColList", "IdCols" and "ColListExceptIds")</param>
         /// <returns>List of relevant Column Data</returns>
-        private List<ColumnData> getWorkColumnList(string colInfoRequest)
+        private List<ColumnData> GetWorkColumnList(string colInfoRequest)
         {
             List<ColumnData> respList = new List<ColumnData>();
             bool isIDCol;
@@ -399,6 +412,26 @@ namespace DataLayerGen.Classes
         }
 
         /// <summary>
+        /// CamelIdColParameters() - Formats and return the id columns as parameters to a 
+        /// method (i.e. - "{data type} {varable name}, ...")
+        /// </summary>
+        /// <returns>Id columns as parameters</returns>
+        private string CamelIdColParameters()
+        {
+            StringBuilder sb = new StringBuilder();
+            List<ColumnData> idColList = GetWorkColumnList("IdCols");
+            bool isFirstTime = true;
+
+            foreach (ColumnData col in idColList)
+            {
+                sb.Append((isFirstTime) ? "" :  ", ");
+                sb.Append($"{DataTypeLookup.GetCodeDataType(col)} {GetCamelCase(col.ColumnName)}");
+                isFirstTime = false;
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// ShouldSectionBeIncluded() - Determines if a section should be included based on the 
         /// Command Parameter 1 and entered properties
         /// </summary>
@@ -415,6 +448,21 @@ namespace DataLayerGen.Classes
             if (cmd.Param1.ToLower() == "idisnotidentity") { return !IsIdentityColumn; }
 
             return result;
+        }
+
+        /// <summary>
+        /// GetCamelCase() - Returns the Camel Case version of the passsed string. 
+        /// </summary>
+        /// <param name="inputStr">String to work on</param>
+        /// <returns>Camel Case version of the passsed string</returns>
+        private string GetCamelCase(string inputStr)
+        {
+            if (string.IsNullOrEmpty(inputStr))
+            {
+                return inputStr;
+            }
+
+            return char.ToLower(inputStr[0]) + inputStr.Substring(1);
         }
 
         #endregion Helpers

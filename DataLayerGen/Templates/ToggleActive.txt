@@ -8,7 +8,7 @@ Params:
 Results:
 	RetCode
 		0 = Success
-		1 = No rows updated
+		1 = No rows updated, affected rows = 0
 		99 = DB Exception
 
 Change Log: When, Who: What

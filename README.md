@@ -1,6 +1,6 @@
 # DataLayerGen
 
-This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model and Data Layer for a requested Table. The results are not intended to be a 100% solution, just a starting point.
+This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model and Data Layer for a Table. The results are not intended to be a 100% solution, just a starting point.
 
 ## Templates
 
@@ -13,6 +13,7 @@ This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model
 | Delete | Stored Procedure to delete a row. |
 | Toggle Active | Stored Procedure to toggle the active indicator for a requested Id. |
 | C# Entity Class | POCO Class for an Entity. |
+| C# Data Layer Class | C# Class to perform SQL CRUD operations for the Entity. |
 
 ## Template Commands
 
@@ -25,15 +26,20 @@ The following is a list of the commands that can be used in a template.
 * **`{{Date}}`** - Inserts the current date (M/d/yyyy format).
 * **`{{Schema}}`** - Inserts the selected table's schema name.
 * **`{{Table}}`** - Inserts the selected table's name.
+* **`{{CamelTable}}`** - Inserts the selected table's name in camel case.
 * **`{{Each|<Collection>|<Format>}}`** - Will repeat the `"<Format>"` result for each item in the `<Collection>` (*more details in a later section*).
-
 * **`{{If|<Variable>|<True Format>|<False Format>}}`** - Will insert the `<True Format>` if the `<Variable>` is true.  Otherwise the `<False Format>` is inserted  (*more details in a later section*).
-* **`{{SectionIf|<Variable>}}...{{/SectionIf}}`** - Placed on separate lines with conditional content in between.  If the condition `<Variable>` is true, the content within the tags will be included (*more details in a later section*).
+* **`{{SectionIf|<Variable>}}...{{/SectionIf}}`** - Placed on separate lines with conditional content in between.  If the condition `<Variable>` is true, the content within the tags will be included (*more details in a later section*).  At this time, embedded **`{{SectionIf|<Variable>}}...{{/SectionIf}}`** are not supported.
 * **`{{NameColName}}`** - Inserts the "Name" column's name.
+* **`{{CamelNameColName}}`** - Inserts the "Name" column's name in camel case.
 * **`{{NameColType}}`** - Inserts the "Name" column's SQL Data Type.
+* **`{{NameColCodeType}}`** - Inserts the "Name" column's Code Data Type.
 * **`{{ActiveCol}}`** - Inserts the "Active" column's name.
+* **`{{ActiveColType}}`** - Inserts the "Active" column's SQL Data Type.
+* **`{{ActiveColCodeType}}`** - Inserts the "Active" column's Code Data Type.
 * **`{{ActiveValue}}`** - Inserts the "Active" column's Active value.
 * **`{{InactiveValue}}`** - Inserts the "Active" column's Inactive value.
+* **`{{CamelIdColParameters}}`** - Id column(s) as parameters to a method (i.e. - "int tableId, ...").
 
 ### Details for `{{Each|<Collection>|<Format>}}`
 
@@ -46,6 +52,7 @@ The following is a list of the commands that can be used in a template.
 #### Variables that can be used within the `{{Each ...}` `<format>`
 
 * **`[[ColName]]`** - Column Name
+* **`[[CamelColName]]`** - Column Name in camel case format (i.e. - first character lowercase).
 * **`[[ColSqlType]]`** - Column's SQL Data Type (i.e. - varchar(50), money, ...).
 * **`[[ColCodeType]]`** - Column's C# Data Type (i.e. - string, decimal ...).
 

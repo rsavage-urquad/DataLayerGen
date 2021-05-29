@@ -73,7 +73,7 @@ namespace DataLayerGen
                 var workItem = item as CheckBox;
                 if (workItem.IsChecked == true)
                 {
-                    lblConsole.Content = $"Processing {workItem.Content.ToString()}";
+                    lblConsole.Content = $"Processing {workItem.Content}";
                     lblConnStr.UpdateLayout();
                     string result = ProcessCheckedTemplate(workItem.Content.ToString(), ColDataList);
                     if (result != "") { processMessages.Add(result); }
@@ -327,7 +327,7 @@ namespace DataLayerGen
         /// </summary>
         private void PopulateTableInfo()
         {
-            List<TableData> tdList = new List<TableData>();
+            List<TableData> tdList;
             string defaultSelection = LoadTableList(out tdList);
 
             // Create and add the default item
