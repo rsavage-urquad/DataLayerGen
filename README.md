@@ -2,6 +2,17 @@
 
 This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model and Data Layer for a Table. The results are not intended to be a 100% solution, just a starting point.
 
+## Setup
+
+* **Template Files** - Template files should be placed in the "Templates" folder and should be configured as:
+  * **Build Action** - "None"
+  * **Copy to Output Directory** - "Copy Always"
+* **Templates.json File** - Identifies each template that can be generated. Parameters for templates include:
+  * **"templateId"** - Id of template, must be unique.
+  * **"title"** - User friendly title of template.
+  * **"templateFilename"** - Filename of template.
+  * **"outputName"** - Generated output filename.  Can include commands (i.e. "`{{Schema}}`.`{{Table}}`GetById.sql").
+
 ## Templates
 
 | Template | Purpose |
