@@ -22,8 +22,10 @@ BEGIN
     where {{NameColName}} = @{{NameColName}}
 	{{SectionIf|ActivePresent}}
 	and (
-		{{ActiveCol}} = {{ActiveValue}} OR
+		{{ActiveColName}} = {{ActiveValue}} OR
 		@IncludeInactive = 1
 	);
 	{{/SectionIf}}
 END
+go
+

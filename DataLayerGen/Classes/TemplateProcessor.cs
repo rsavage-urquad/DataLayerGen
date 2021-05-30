@@ -25,6 +25,7 @@ namespace DataLayerGen.Classes
         private string ActiveValue = "";
         private string InactiveValue = "";
         private bool IsActiveValueString = false;
+        private string ModifiedByColumn = "";
 
         #endregion Properties
 
@@ -43,8 +44,10 @@ namespace DataLayerGen.Classes
         /// <param name="activeVal">Active Value</param>
         /// <param name="inactiveVal">Inactave Value</param>
         /// <param name="activeColDataType">Active Column DataType</param>
+        /// <param name="modifiedByCol">Modified By Column</param>
         public TemplateProcessor(TemplateInfo templateInfo, List<ColumnData> cdList, string table, string saveLoc, string idCols, 
-                                 bool isIdentityCol, string nameCol, string activeCol, string activeVal, string inactiveVal, string activeColDataType)
+                                 bool isIdentityCol, string nameCol, string activeCol, string activeVal, string inactiveVal, 
+                                 string activeColDataType, string modifiedByCol)
         {
             TemplateInfo = templateInfo;
             ColDataList = cdList;
@@ -54,6 +57,7 @@ namespace DataLayerGen.Classes
             ActiveColumn = activeCol;
             ActiveValue = activeVal;
             InactiveValue = inactiveVal;
+            ModifiedByColumn = modifiedByCol;
 
             var tableNameInfo = table.Split('.');
             if (tableNameInfo.Length == 2)
@@ -200,7 +204,7 @@ namespace DataLayerGen.Classes
             line = line.Replace("{{Schema}}", SchemaName);
             line = line.Replace("{{Table}}", TableName);
             line = line.Replace("{{CamelTable}}", GetCamelCase(TableName));
-            line = line.Replace("{{ActiveCol}}", ActiveColumn);
+            line = line.Replace("{{ActiveColName}}", ActiveColumn);
             line = line.Replace("{{ActiveColType}}", GetSpecialColType("Active", "SQL"));
             line = line.Replace("{{ActiveColCodeType}}", GetSpecialColType("Active", "Code"));
             line = line.Replace("{{ActiveValue}}", (IsActiveValueString) ? $"'{ActiveValue}'" : ActiveValue);
@@ -210,6 +214,7 @@ namespace DataLayerGen.Classes
             line = line.Replace("{{NameColType}}", GetSpecialColType("Name", "SQL"));
             line = line.Replace("{{NameColCodeType}}", GetSpecialColType("Name", "Code"));
             line = line.Replace("{{CamelIdColParameters}}", CamelIdColParameters());
+            line = line.Replace("{{ModifiedByColName}}", ModifiedByColumn);
 
             return line;
         }
@@ -304,6 +309,9 @@ namespace DataLayerGen.Classes
                     break;
                 case "idisnotidentity":
                     isIfConditionTrue = (!IsIdentityColumn);
+                    break;
+                case "modifiedbypresent":
+                    isIfConditionTrue = (ModifiedByColumn != "");
                     break;
                 default:
                     isIfConditionTrue = false;
@@ -446,6 +454,7 @@ namespace DataLayerGen.Classes
             if (cmd.Param1.ToLower() == "activeisnotstring") { return (!IsActiveValueString); }
             if (cmd.Param1.ToLower() == "idisidentity") { return IsIdentityColumn; }
             if (cmd.Param1.ToLower() == "idisnotidentity") { return !IsIdentityColumn; }
+            if (cmd.Param1.ToLower() == "modifiedbypresent") { return (ModifiedByColumn != ""); }
 
             return result;
         }

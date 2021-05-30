@@ -27,18 +27,19 @@ The following is a list of the commands that can be used in a template.
 * **`{{Schema}}`** - Inserts the selected table's schema name.
 * **`{{Table}}`** - Inserts the selected table's name.
 * **`{{CamelTable}}`** - Inserts the selected table's name in camel case.
-* **`{{Each|<Collection>|<Format>}}`** - Will repeat the `"<Format>"` result for each item in the `<Collection>` (*more details in a later section*).
-* **`{{If|<Variable>|<True Format>|<False Format>}}`** - Will insert the `<True Format>` if the `<Variable>` is true.  Otherwise the `<False Format>` is inserted  (*more details in a later section*).
+* **`{{Each|<Collection>|<Format>}}`** - Will repeat the `<Format>` result for each item in the `<Collection>` (*more details in a later section*).
+* **`{{If|<Variable>|<True Format>}}`** - Will insert the `<True Format>` if the `<Variable>` is true.  (*more details in a later section*).
 * **`{{SectionIf|<Variable>}}...{{/SectionIf}}`** - Placed on separate lines with conditional content in between.  If the condition `<Variable>` is true, the content within the tags will be included (*more details in a later section*).  At this time, embedded **`{{SectionIf|<Variable>}}...{{/SectionIf}}`** are not supported.
 * **`{{NameColName}}`** - Inserts the "Name" column's name.
 * **`{{CamelNameColName}}`** - Inserts the "Name" column's name in camel case.
 * **`{{NameColType}}`** - Inserts the "Name" column's SQL Data Type.
 * **`{{NameColCodeType}}`** - Inserts the "Name" column's Code Data Type.
-* **`{{ActiveCol}}`** - Inserts the "Active" column's name.
+* **`{{ActiveColName}}`** - Inserts the "Active" column's name.
 * **`{{ActiveColType}}`** - Inserts the "Active" column's SQL Data Type.
 * **`{{ActiveColCodeType}}`** - Inserts the "Active" column's Code Data Type.
 * **`{{ActiveValue}}`** - Inserts the "Active" column's Active value.
 * **`{{InactiveValue}}`** - Inserts the "Active" column's Inactive value.
+* **`{{ModifiedByColName}}`** - Inserts the "Modified By" column's name.
 * **`{{CamelIdColParameters}}`** - Id column(s) as parameters to a method (i.e. - "int tableId, ...").
 
 ### Details for `{{Each|<Collection>|<Format>}}`
@@ -55,14 +56,16 @@ The following is a list of the commands that can be used in a template.
 * **`[[CamelColName]]`** - Column Name in camel case format (i.e. - first character lowercase).
 * **`[[ColSqlType]]`** - Column's SQL Data Type (i.e. - varchar(50), money, ...).
 * **`[[ColCodeType]]`** - Column's C# Data Type (i.e. - string, decimal ...).
+* **`[[ColCodeDefaultValue]]`** - Column's C# Default Value (i.e. - 0, "", DateTime.MinValue ...).
 
 ### `{{If}|...}` and `{{SectionIf|...}}` Variables
 
-* **`ActivePresent`** - True if the selected "ActiveCol" is not equal blank.
+* **`ActivePresent`** - True if the selected "ActiveColName" is not equal blank.
 * **`ActiveIsString`** - True if the entered "Active" value is a string (or character).
 * **`ActiveIsNotString`** - True if the entered "Active" value is not a string (or character).
 * **`IdIsIdentity`** - True if the "Is Identity Column?" item is checked.
 * **`IdIsNotIdentity`** - True if the "Is Identity Column?" item is not checked.
+* **`ModifiedByPresent`** - True if the selected "ModifiedByColName" is not equal blank.
 
 ### Modifiers
 
@@ -74,4 +77,4 @@ Used in the `<Format>` section of an `{{Each ...}}` command, modifiers can be ad
 ### Examples
 
 * `{{Each|ColList|[[ColName]][Last|:,]}}` would list all Column Names followed by a "," for all columns except the last one.
-* `{{If|ActivePresent|@IncludeInactive bit = 0}}` - Includes the text `@IncludeInactive bit = 0` if the "ActiveCol" selection is **not** blank.
+* `{{If|ActivePresent|@IncludeInactive bit = 0}}` - Includes the text `@IncludeInactive bit = 0` if the "ActiveColName" selection is **not** blank.

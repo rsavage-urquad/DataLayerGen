@@ -1,9 +1,6 @@
 using System;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace <To Be Populated>
 {
@@ -105,9 +102,9 @@ namespace <To Be Populated>
             using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}Ins"))
             {
 	            {{SectionIf|IdIsNotIdentity}}
-	            {{Each|IdCols|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+	            {{Each|IdCols|sql.SetParameter("[[ColName]]", {{CamelTable}}Obj.[[ColName]]);}}
 	            {{/SectionIf}}
-                {{Each|ColListExceptIds|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+                {{Each|ColListExceptIds|sql.SetParameter("[[ColName]]", {{CamelTable}}Obj.[[ColName]]);}}
 
                 using (var table = sql.GetTable())
                 {
@@ -165,7 +162,7 @@ namespace <To Be Populated>
 
             using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}pd"))
             {
-                {{Each|ColList|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
+                {{Each|ColList|sql.SetParameter("[[ColName]]", {{CamelTable}}Obj.[[ColName]]);}}
 
                 using (var table = sql.GetTable())
                 {
@@ -246,21 +243,21 @@ namespace <To Be Populated>
         /// </summary>
         /// <param name="cs">Connection String</param>
         {{Each|IdCols|/// <param name="[[CamelColName]]">Id of item to retrieve</param>}}
-        /// <param name="requestedBy">User requesting activity</param>
+        {{If|ModifiedByPresent|/// <param name="requestedBy">User requesting activity</param>}}
         /// <returns>
         ///     0 = Success
         ///     1 = Request Id does not exist
         ///     98 = No results
         ///     99 = Exception during Toggle
         /// </returns>
-        public int {{Table}}ToggleActive(string cs, {{CamelIdColParameters}}, string requestedBy)
+        public int {{Table}}ToggleActive(string cs, {{CamelIdColParameters}}{{If|ModifiedByPresent|, string requestedBy}})
         {
             int retCode = 0;
 
             using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}ToggleActive"))
             {
                 {{Each|IdCols|sql.SetParameter("[[ColName]]", [[CamelColName]]);}}
-                sql.SetParameter("RequestedBy", requestedBy);
+                {{If|ModifiedByPresent|sql.SetParameter("RequestedBy", requestedBy);}}
 
                 using (var table = sql.GetTable())
                 {

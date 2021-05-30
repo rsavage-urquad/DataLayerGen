@@ -6,7 +6,7 @@ Params:
 	{{SectionIf|IdIsNotIdentity}}
 	{{Each|IdCols|@[[ColName]] -}}
 	{{/SectionIf}}
-    {{Each|ColListExceptIds|@[[ColName]] -}}  
+    {{Each|ColListExceptIds|@[[ColName]] - }}
 
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
@@ -14,7 +14,7 @@ CREATE OR ALTER PROCEDURE  {{Schema}}.{{Table}}Ins
 	{{SectionIf|IdIsNotIdentity}}
 	{{Each|IdCols|@[[ColName]] [[ColSqlType]],}}
 	{{/SectionIf}}
-    {{Each|ColListExceptIds|@[[ColName]] [[ColSqlType]][Last|:,]}}   
+    {{Each|ColListExceptIds|@[[ColName]] [[ColSqlType]][Last|:,]}}
 AS
 BEGIN
 	set arithabort on;
@@ -56,3 +56,5 @@ BEGIN
 	{{/SectionIf}}
 	@RetCode as RetCode;
 END
+go
+

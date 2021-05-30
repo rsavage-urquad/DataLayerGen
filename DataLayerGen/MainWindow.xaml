@@ -5,41 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DataLayerGen"
         mc:Ignorable="d"
-        Title="Data Layer Generator" Height="492" Width="801" Margin="0" Left="0" Background="{x:Null}">
+        Title="Data Layer Generator" Height="511" Width="801" Margin="0" Left="0" Background="{x:Null}">
     <Grid x:Name="mainGrid" Margin="0,0,0,-2" OpacityMask="{DynamicResource {x:Static SystemColors.InfoBrushKey}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="607*"/>
+            <ColumnDefinition Width="186*"/>
+        </Grid.ColumnDefinitions>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="#FF185CAE"/>
                 <GradientStop Color="#FF58219B" Offset="0.67"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <Button x:Name="btnGenerate" Content="Generate" HorizontalAlignment="Left" Margin="707,10,10,0" VerticalAlignment="Top" Width="75" Click="btnGenerate_Click" TabIndex="11"/>
-        <Button x:Name="btnExit" Content="Exit" HorizontalAlignment="Left" Margin="707,35,10,0" VerticalAlignment="Top" Width="75" Click="btnExit_Click" TabIndex="12"/>
+        <Label x:Name="lblConnStr" Content="Connection String:" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.675,2.769" Foreground="White"/>
+        <TextBox x:Name="txtConnStr" HorizontalAlignment="Left" Height="23" Margin="120,10,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="229" LostFocus="txtConnStr_LostFocus" TabIndex="0" />
+        <Button x:Name="btnConnStrWizard" Content="..." HorizontalAlignment="Left" Margin="354,13,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnConnStrWizard_Click" TabIndex="1" />
+        <Label x:Name="lblSaveLocation" Content="Save Location:" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.675,2.769" Foreground="White"/>
+        <TextBox x:Name="txtSaveLocation" HorizontalAlignment="Left" Height="23" Margin="120,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="229" TabIndex="2"/>
+        <Button x:Name="btnSaveFolderDlg" Content="..." HorizontalAlignment="Left" Margin="354,41,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnSaveFolderDlg_Click" TabIndex="3"/>
         <Label x:Name="lblTable" Content="Table:" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <ComboBox x:Name="cboTableName" HorizontalAlignment="Left" Margin="120,67,0,0" VerticalAlignment="Top" Width="229" ItemsSource="{Binding TableItems}" SelectedItem="{Binding SelectedTableItem}" SelectionChanged="cboTableName_SelectionChanged" TabIndex="4" />
         <Label x:Name="lblIdColumn" Content="Id Column:" HorizontalAlignment="Left" Margin="10,91,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <Label x:Name="lblNameColumn" Content="Name Column:" HorizontalAlignment="Left" Margin="10,118,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <ComboBox x:Name="cboNameColumn" HorizontalAlignment="Left" Margin="120,122,0,0" VerticalAlignment="Top" Width="229" TabIndex="7"/>
-        <Label x:Name="lblTemplates" Content="Templates:" HorizontalAlignment="Left" Margin="10,176,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <Label x:Name="lblActiveColumn" Content="Active Column:" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <ComboBox x:Name="cboActiveColumn" HorizontalAlignment="Left" Margin="120,149,0,0" VerticalAlignment="Top" Width="229" SelectionChanged="cboActiveColumn_SelectionChanged" TabIndex="8"/>
-        <Label x:Name="lblConsole" Content="" HorizontalAlignment="Left" Margin="10,416,0,0" VerticalAlignment="Top" Foreground="Black" BorderBrush="#FFFDFAFA" Background="#FFDCD8F5" Width="772"/>
-        <Label x:Name="lblActiveValue" Content="Active Value:" HorizontalAlignment="Left" Margin="354,145,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <TextBox x:Name="txtActiveValue" HorizontalAlignment="Left" Height="23" Margin="436,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="47" RenderTransformOrigin="0.489,-0.565" TabIndex="9"/>
         <TextBox x:Name="txtIdCols" HorizontalAlignment="Left" Height="23" Margin="120,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="229" TabIndex="5"/>
         <Label x:Name="lblSepMsg" Content="(Separate by &quot;;&quot; or &quot;,&quot;)" HorizontalAlignment="Left" Margin="354,91,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <ScrollViewer x:Name="svTemplateArea" HorizontalAlignment="Left" Height="204" Margin="10,207,0,0" VerticalAlignment="Top" Width="772">
+        <CheckBox x:Name="chkIsIdentityCol" Content="Is Identity Column?" HorizontalAlignment="Left" Margin="506,97,0,0" VerticalAlignment="Top" Foreground="White" TabIndex="6" IsChecked="True" Grid.ColumnSpan="2"/>
+        <Label x:Name="lblNameColumn" Content="Name Column:" HorizontalAlignment="Left" Margin="10,118,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <ComboBox x:Name="cboNameColumn" HorizontalAlignment="Left" Margin="120,122,0,0" VerticalAlignment="Top" Width="229" TabIndex="7"/>
+        <Label x:Name="lblActiveColumn" Content="Active Column:" HorizontalAlignment="Left" Margin="10,146,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <ComboBox x:Name="cboActiveColumn" HorizontalAlignment="Left" Margin="120,149,0,0" VerticalAlignment="Top" Width="229" SelectionChanged="cboActiveColumn_SelectionChanged" TabIndex="8"/>
+        <Label x:Name="lblActiveValue" Content="Active Value:" HorizontalAlignment="Left" Margin="354,145,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <TextBox x:Name="txtActiveValue" HorizontalAlignment="Left" Height="23" Margin="436,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="47" RenderTransformOrigin="0.489,-0.565" TabIndex="9"/>
+        <Label x:Name="lblInactiveValue" Content="Inactive Value:" HorizontalAlignment="Left" Margin="506,146,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <TextBox x:Name="txtInactiveValue" HorizontalAlignment="Left" Height="23" Margin="596,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="47" RenderTransformOrigin="0.489,-0.565" TabIndex="10" Grid.ColumnSpan="2"/>
+        <Label x:Name="lblModifiedByColumn" Content="Modified By Col:" HorizontalAlignment="Left" Margin="10,172,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <ComboBox x:Name="cboModifiedByColumn" HorizontalAlignment="Left" Margin="120,176,0,0" VerticalAlignment="Top" Width="229" TabIndex="11"/>
+        <Label x:Name="lblTemplates" Content="Templates:" HorizontalAlignment="Left" Margin="11,203,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <ScrollViewer x:Name="svTemplateArea" HorizontalAlignment="Left" Height="204" Margin="10,234,0,0" VerticalAlignment="Top" Width="772" Grid.ColumnSpan="2">
             <StackPanel x:Name="panTemplates" HorizontalAlignment="Left" Height="30" Margin="50,0,0,0" VerticalAlignment="Top" Width="551">
             </StackPanel>
         </ScrollViewer>
-        <TextBox x:Name="txtConnStr" HorizontalAlignment="Left" Height="23" Margin="120,10,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="229" LostFocus="txtConnStr_LostFocus" TabIndex="0" />
-        <Label x:Name="lblConnStr" Content="Connection String:" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.675,2.769" Foreground="White"/>
-        <TextBox x:Name="txtSaveLocation" HorizontalAlignment="Left" Height="23" Margin="120,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="229" TabIndex="2"/>
-        <Label x:Name="lblSaveLocation" Content="Save Location:" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.675,2.769" Foreground="White"/>
-        <Button x:Name="btnSaveFolderDlg" Content="..." HorizontalAlignment="Left" Margin="354,41,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnSaveFolderDlg_Click" TabIndex="3"/>
-        <ComboBox x:Name="cboTableName" HorizontalAlignment="Left" Margin="120,67,0,0" VerticalAlignment="Top" Width="229" ItemsSource="{Binding TableItems}" SelectedItem="{Binding SelectedTableItem}" SelectionChanged="cboTableName_SelectionChanged" TabIndex="4" />
-        <Button x:Name="btnConnStrWizard" Content="..." HorizontalAlignment="Left" Margin="354,13,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnConnStrWizard_Click" TabIndex="1" />
-        <TextBox x:Name="txtInactiveValue" HorizontalAlignment="Left" Height="23" Margin="596,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="47" RenderTransformOrigin="0.489,-0.565" TabIndex="10"/>
-        <Label x:Name="lblInactiveValue" Content="Inactive Value:" HorizontalAlignment="Left" Margin="506,146,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <CheckBox x:Name="chkIsIdentityCol" Content="Is Identity Column?" HorizontalAlignment="Left" Margin="506,97,0,0" VerticalAlignment="Top" Foreground="White" TabIndex="6" IsChecked="True"/>
+        <Button x:Name="btnGenerate" Content="Generate" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Width="75" Click="btnGenerate_Click" TabIndex="1000" Grid.Column="1"/>
+        <Button x:Name="btnExit" Content="Exit" HorizontalAlignment="Left" Margin="100,35,0,0" VerticalAlignment="Top" Width="75" Click="btnExit_Click" TabIndex="1001" Grid.Column="1"/>
+        <Label x:Name="lblConsole" Content="" HorizontalAlignment="Left" Margin="11,443,0,0" VerticalAlignment="Top" Foreground="Black" BorderBrush="#FFFDFAFA" Background="#FFDCD8F5" Width="772" Grid.ColumnSpan="2"/>
     </Grid>
 </Window>

@@ -22,6 +22,7 @@ namespace DataLayerGen
         private ObservableCollection<ComboBoxItem> TableItems = new ObservableCollection<ComboBoxItem>();
         private ObservableCollection<ComboBoxItem> NameColumnItems = new ObservableCollection<ComboBoxItem>();
         private ObservableCollection<ComboBoxItem> ActiveColumnItems = new ObservableCollection<ComboBoxItem>();
+        private ObservableCollection<ComboBoxItem> ModifiedByColumnItems = new ObservableCollection<ComboBoxItem>();
 
         public MainWindow()
         {
@@ -170,18 +171,21 @@ namespace DataLayerGen
             ComboBoxItem tableCbi = (ComboBoxItem)cboTableName.SelectedItem;
             ComboBoxItem nameCbi = (ComboBoxItem)cboNameColumn.SelectedItem;
             ComboBoxItem activeCbi = (ComboBoxItem)cboActiveColumn.SelectedItem;
+            ComboBoxItem modifiedByCbi = (ComboBoxItem)cboModifiedByColumn.SelectedItem;
 
             TemplateInfo template = _TemplateInfoList.First(t => t.Title == templateTitle);
             string table = (tableCbi == null) ? "" : tableCbi.Content.ToString();
             string nameCol = GetCboSelectedValue(nameCbi);
             string activeCol = GetCboSelectedValue(activeCbi);
             string activeColDataType = GetColDataType(activeCol);
+            string modifiedByCol = GetCboSelectedValue(modifiedByCbi);
             bool isIdentityCol = (chkIsIdentityCol.IsChecked ?? false);
 
             // TODO: (Future) Overwrite file check (do for all?).
 
             TemplateProcessor tempProc = new TemplateProcessor(template, cdList, table, txtSaveLocation.Text, txtIdCols.Text, isIdentityCol,  
-                                                               nameCol, activeCol, txtActiveValue.Text, txtInactiveValue.Text, activeColDataType);
+                                                               nameCol, activeCol, txtActiveValue.Text, txtInactiveValue.Text, activeColDataType,
+                                                               modifiedByCol);
             try
             {
                 result = tempProc.ProcessTemplate();
@@ -213,6 +217,7 @@ namespace DataLayerGen
         private void BuildTemplateCheckboxes()
         {
             int itemHeight = 20;
+            int tabIndex = 100;
 
             if (_TemplateInfoList.Count == 0)
             {
@@ -229,7 +234,7 @@ namespace DataLayerGen
                 string content = item.Title;
                 //string name = "temp" + item.TemplateId;
                 string name = "tempItem";
-                CheckBox chk = new CheckBox { Content = content, Name = name, Height = itemHeight, Foreground = new SolidColorBrush(Colors.White) };
+                CheckBox chk = new CheckBox { Content = content, Name = name, Height = itemHeight, Foreground = new SolidColorBrush(Colors.White), TabIndex = tabIndex };
                 panTemplates.Children.Add(chk);
                 panTemplates.Height += (int)chk.Height;
             }
@@ -384,6 +389,7 @@ namespace DataLayerGen
             ClearColumnComboBoxes();
             cboNameColumn.ItemsSource = null;
             cboActiveColumn.ItemsSource = null;
+            cboModifiedByColumn.ItemsSource = null;
 
             if (tableName == "") { return; }
 
@@ -393,17 +399,21 @@ namespace DataLayerGen
             var defaultItem = new ComboBoxItem { Content = defaultSelection };
             NameColumnItems.Add(defaultItem);
             ActiveColumnItems.Add(defaultItem);
+            ModifiedByColumnItems.Add(defaultItem);
 
             foreach (ColumnData colItem in ColDataList)
             {
                 NameColumnItems.Add(new ComboBoxItem { Content = colItem.ColumnName });
                 ActiveColumnItems.Add(new ComboBoxItem { Content = colItem.ColumnName });
+                ModifiedByColumnItems.Add(new ComboBoxItem { Content = colItem.ColumnName });
             }
 
             cboNameColumn.ItemsSource = NameColumnItems;
             cboActiveColumn.ItemsSource = ActiveColumnItems;
+            cboModifiedByColumn.ItemsSource = ModifiedByColumnItems;
             cboNameColumn.SelectedIndex = 0;
             cboActiveColumn.SelectedIndex = 0;
+            cboModifiedByColumn.SelectedIndex = 0;
 
             txtIdCols.Text = "";
             chkIsIdentityCol.IsChecked = true;
@@ -418,9 +428,11 @@ namespace DataLayerGen
         {
             NameColumnItems.Clear();
             ActiveColumnItems.Clear();
+            ModifiedByColumnItems.Clear();
 
             cboNameColumn.ItemsSource = NameColumnItems;
             cboActiveColumn.ItemsSource = ActiveColumnItems;
+            cboModifiedByColumn.ItemsSource = ModifiedByColumnItems;
         }
 
         /// <summary>

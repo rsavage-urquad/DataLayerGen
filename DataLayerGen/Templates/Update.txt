@@ -3,7 +3,7 @@ Author:
 Date:	{{Date}}
 Desc:	Updates a row for the requested Id(s).
 Params:
-	{{Each|ColList|[[ColName]] - }} 
+	{{Each|ColList|[[ColName]] - }}
 
 Results:
 	RetCode
@@ -14,7 +14,7 @@ Results:
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
 CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}Upd
-    {{Each|ColList|@[[ColName]] [[ColSqlType]][Last|:,]}}   
+    {{Each|ColList|@[[ColName]] [[ColSqlType]][Last|:,]}}
 AS
 BEGIN
 	set arithabort on;
@@ -50,3 +50,5 @@ BEGIN
 
 	select @RetCode as RetCode;
 END
+go
+

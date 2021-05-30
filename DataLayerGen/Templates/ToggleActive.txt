@@ -4,7 +4,9 @@ Date:	{{Date}}
 Desc:	Toggles the Active Indicator of a row for the requested Id(s).
 Params:
 	{{Each|IdCols|[[ColName]] - }} 
-
+	{{SectionIf|ModifiedByPresent}}
+	@RequestedBy - User requesting the change.
+	{{/SectionIf}}
 Results:
 	RetCode
 		0 = Success
@@ -14,7 +16,10 @@ Results:
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
 CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}ToggleActive
-    {{Each|IdCols|@[[ColName]] [[ColSqlType]][Last|:,]}}   
+    {{Each|IdCols|@[[ColName]] [[ColSqlType]][Last|:,]}}{{If|ModifiedByPresent|,}}
+	{{SectionIf|ModifiedByPresent}}
+	@RequestedBy varchar(50)
+	{{/SectionIf}}
 AS
 BEGIN
 	set arithabort on;
@@ -25,7 +30,7 @@ BEGIN
 	{{If|ActiveIsString|declare @ActiveVal varchar(10);}}
 	{{If|ActiveIsNotString|declare @ActiveVal bit;}}
 
-	select @ActiveVal = {{ActiveCol}}
+	select @ActiveVal = {{ActiveColName}}
 	from {{Schema}}.{{Table}} with(nolock)
 	{{Each|IdCols|[First|where:and] [[ColName]] = @[[ColName]][Last|;:]}}
 
@@ -43,7 +48,10 @@ BEGIN
 		begin tran {{Table}}ToggleActive;
 
 		update {{Schema}}.{{Table}} set
-		{{ActiveCol}} = @ActiveVal
+		{{ActiveColName}} = @ActiveVal{{If|ModifiedByPresent|,}}
+		{{SectionIf|ModifiedByPresent}}
+		{{ModifiedByColName}} = @RequestedBy
+		{{/SectionIf}}
 		{{Each|IdCols|[First|where:and] [[ColName]] = @[[ColName]][Last|;:]}}
 
 		set @rowCount = @@ROWCOUNT;
@@ -62,3 +70,5 @@ BEGIN
 
 	select @RetCode as RetCode;
 END
+go
+
