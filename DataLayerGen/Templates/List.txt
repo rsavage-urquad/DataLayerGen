@@ -1,0 +1,30 @@
+/* -------------------------------------------------------------------------------------------------
+Author:	
+Date:	{{Date}}
+Desc:	Retrieves all row(s) for {{Schema}}.{{Table}} table.
+{{SectionIf|ActivePresent}}
+Params:
+    @IncludeInactive - Should inactive Rows be returned?
+{{/SectionIf}}
+
+Change Log: When, Who: What
+------------------------------------------------------------------------------------------------- */
+CREATE OR ALTER PROCEDURE {{Schema}}.{{Table}}List
+    {{If|ActivePresent|@IncludeInactive bit = 0}}
+AS
+BEGIN
+	set arithabort on;
+	set nocount on;
+
+    select
+    {{Each|ColList|[[ColName]][Last|:,]}}
+    from {{Schema}}.{{Table}} with(nolock)
+	{{SectionIf|ActivePresent}}
+	where (
+		{{ActiveColName}} = {{ActiveValue}} OR
+		@IncludeInactive = 1
+	);
+	{{/SectionIf}}
+END
+go
+

@@ -54,6 +54,31 @@ namespace DataLayerGen.DataLayer
             return tableDataList;
         }
 
+        /// <summary>
+        /// VerifyConnectionString() - Verifies that the Connection String is valid.
+        /// </summary>
+        /// <param name="cs">Connection String</param>
+        /// <returns>True if Valid, otherwise false.</returns>
+        public bool VerifyConnectionString(string cs)
+        {
+            bool retCode;
+            using (SqlConnection conn = new SqlConnection(cs))
+            {
+                try
+                {
+                    conn.Open();
+                    conn.Close();
+                    retCode = true;
+                }
+                catch (Exception)
+                {
+                    retCode = false;
+                }
+            }
+
+            return retCode;
+        }
+
         #endregion Public Methods
 
         #region Private/Protected Methods

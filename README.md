@@ -18,7 +18,8 @@ This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model
 | Template | Purpose |
 | --- | :--- |
 | Get By Id | Stored Procedure to retrieve a row for the requested Id. |
-| Get By Name | Stored Procedure to retrieve a row for the requested Name. |
+| List | Stored Procedure to retrieve all rows. |
+| List By Name | Stored Procedure to retrieve all rows for the requested Name. |
 | Insert | Stored Procedure to insert a row. |
 | Update | Stored Procedure to update a row. |
 | Delete | Stored Procedure to delete a row. |

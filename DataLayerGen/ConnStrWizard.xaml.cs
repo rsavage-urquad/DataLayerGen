@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataLayerGen.DataLayer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -188,6 +189,18 @@ namespace DataLayerGen
             {
                 if (txtUserId.Text == "") { errorMsg.Add("Please enter a User Id"); }
                 if (txtPassword.Password == "") { errorMsg.Add("Please enter a Password"); }
+            }
+
+            if (errorMsg.Count == 0)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                SetProperties();
+                TableDataDl csTest = new TableDataDl();
+                if (!csTest.VerifyConnectionString(GetConnectionString()))
+                {
+                    errorMsg.Add("Connection String could not connect to DB");
+                }
+                Mouse.OverrideCursor = Cursors.Arrow;
             }
 
             if (errorMsg.Count > 0)

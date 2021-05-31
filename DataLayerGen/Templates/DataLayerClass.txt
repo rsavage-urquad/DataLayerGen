@@ -4,7 +4,7 @@ using System.Data;
 
 namespace <To Be Populated>
 {
-    class {{Table}}Dl
+    public class {{Table}}Dl
     {
         #region Public Methods
 
@@ -37,6 +37,7 @@ namespace <To Be Populated>
                     {
                         foreach (DataRow dr in table.Rows)  // Should only be one
                         {
+                            result = new {{Table}}();
                             PopulateObject(dr, result);
                         }
                     }
@@ -44,6 +45,43 @@ namespace <To Be Populated>
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// {{Table}}List() - Returns a list of all entities in the table
+        /// </summary>
+        /// <param name="cs">Connection String</param>
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be returned? (true/false)</param>
+        {{/SectionIf}}
+        /// <returns></returns>
+        public List<{{Table}}> {{Table}}List(string cs{{If|ActivePresent|, bool includeInactive = false}})
+        {
+            List<{{Table}}> results = new List<{{Table}}>();
+
+            // Prepare and Call the SP
+            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}List"))
+            {
+                {{SectionIf|ActivePresent}}
+                // Add Parameters
+                sql.SetParameter("IncludeInactive", includeInactive);
+
+                {{/SectionIf}}
+                using (var table = sql.GetTable())
+                {
+                    if (table != null)
+                    {
+                        foreach (DataRow dr in table.Rows)
+                        {
+                            {{Table}} obj = new {{Table}}();
+                            PopulateObject(dr, obj);
+                            results.Add(obj);
+                        }
+                    }
+                }
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -160,7 +198,7 @@ namespace <To Be Populated>
         {
             int retCode = 0;
 
-            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}pd"))
+            using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}Upd"))
             {
                 {{Each|ColList|sql.SetParameter("[[ColName]]", {{CamelTable}}Obj.[[ColName]]);}}
 
@@ -173,7 +211,7 @@ namespace <To Be Populated>
                         {
                             foreach (DataRow dr in table.Rows)      // Should only be 1 row
                             {
-                                retCode = dr.Field<int>("ResultCode");
+                                retCode = dr.Field<int>("RetCode");
                             }
                         }
                         else
@@ -219,7 +257,7 @@ namespace <To Be Populated>
                         {
                             foreach (DataRow dr in table.Rows)      // Should only be 1 row
                             {
-                                retCode = dr.Field<int>("ResultCode");
+                                retCode = dr.Field<int>("RetCode");
                             }
                         }
                         else
@@ -268,7 +306,7 @@ namespace <To Be Populated>
                         {
                             foreach (DataRow dr in table.Rows)      // Should only be 1 row
                             {
-                                retCode = dr.Field<int>("ResultCode");
+                                retCode = dr.Field<int>("RetCode");
                             }
                         }
                         else

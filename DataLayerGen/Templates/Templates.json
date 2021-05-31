@@ -6,6 +6,12 @@
     "outputName": "{{Schema}}.{{Table}}GetById.sql"
   },
   {
+    "templateId": "List",
+    "title": "List All",
+    "templateFilename": "List.txt",
+    "outputName": "{{Schema}}.{{Table}}List.sql"
+  },
+  {
     "templateId": "ListByName",
     "title": "List By Name",
     "templateFilename": "ListByName.txt",
