@@ -3,7 +3,7 @@ Author:
 Date:	{{Date}}
 Desc:	Updates a row for the requested Id(s).
 Params:
-	{{Each|ColList|[[ColName]] - }}
+	{{Each|ColList|@[[ColName]] - }}
 
 Results:
 	RetCode

@@ -52,5 +52,11 @@
     "title": "Data Layer C# Class",
     "templateFilename": "DataLayerClass.txt",
     "outputName": "{{Table}}Dl.cs"
+  },
+  {
+    "templateId": "ApiController",
+    "title": "API Controller",
+    "templateFilename": "ApiController.txt",
+    "outputName": "{{Table}}Controller.cs"
   }
 ]

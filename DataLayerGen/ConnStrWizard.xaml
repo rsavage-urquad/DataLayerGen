@@ -13,23 +13,22 @@
                 <GradientStop Color="#FF58219B" Offset="0.67"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <TextBox x:Name="txtServer" HorizontalAlignment="Left" Height="23" Margin="134,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="248"/>
-        <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Left" Margin="430,10,0,0" VerticalAlignment="Top" Width="75" Click="btnSave_Click"/>
         <Label x:Name="label" Content="Server:" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="430,37,0,0" VerticalAlignment="Top" Width="75" Click="btnCancel_Click"/>
-        <TextBox x:Name="txtInitialCatalog" HorizontalAlignment="Left" Height="23" Margin="134,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="248"/>
+        <TextBox x:Name="txtServer" HorizontalAlignment="Left" Height="23" Margin="134,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="248" TabIndex="0"/>
         <Label x:Name="label1" Content="Initial Catalog:" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <TextBox x:Name="txtInitialCatalog" HorizontalAlignment="Left" Height="23" Margin="134,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="248" TabIndex="1"/>
         <Label x:Name="label2" Content="Authentication:" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <TextBox x:Name="txtUserId" HorizontalAlignment="Left" Height="23" Margin="134,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="248"/>
         <Label x:Name="lblUserId" Content="User Id:" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top" Foreground="White" RenderTransformOrigin="0.48,-0.385"/>
-        <PasswordBox x:Name="txtPassword" HorizontalAlignment="Left" Margin="134,153,0,0" VerticalAlignment="Top" Width="248" Height="22"/>
+        <TextBox x:Name="txtUserId" HorizontalAlignment="Left" Height="23" Margin="134,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="248" TabIndex="4"/>
         <Label x:Name="lblPassword" Content="Password:" HorizontalAlignment="Left" Margin="10,149,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <PasswordBox x:Name="txtPassword" HorizontalAlignment="Left" Margin="134,153,0,0" VerticalAlignment="Top" Width="248" Height="22" TabIndex="5"/>
+        <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Left" Margin="430,10,0,0" VerticalAlignment="Top" Width="75" Click="btnSave_Click" TabIndex="100"/>
+        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="430,37,0,0" VerticalAlignment="Top" Width="75" Click="btnCancel_Click" TabIndex="101"/>
         <GroupBox x:Name="gbAuthentication" Header="" HorizontalAlignment="Left" Height="60" Margin="134,60,0,0" VerticalAlignment="Top" Width="192" BorderThickness="0">
             <StackPanel HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" Width="182" Margin="0,0,-2,0">
-                <RadioButton x:Name="radWindows" Content="Windows" HorizontalAlignment="Left" VerticalAlignment="Top" GroupName="rgAuthentication" BorderBrush="White" IsChecked="True" Foreground="White" Checked="radWindows_Checked"/>
-                <RadioButton x:Name="radServer" Content="Server" HorizontalAlignment="Right" VerticalAlignment="Top" GroupName="rgAuthentication" BorderBrush="White" Foreground="White" Margin="0,5,130,0" Checked="radServer_Checked"/>
+                <RadioButton x:Name="radWindows" Content="Windows" HorizontalAlignment="Left" VerticalAlignment="Top" GroupName="rgAuthentication" BorderBrush="White" IsChecked="True" Foreground="White" Checked="radWindows_Checked" TabIndex="2"/>
+                <RadioButton x:Name="radServer" Content="Server" HorizontalAlignment="Right" VerticalAlignment="Top" GroupName="rgAuthentication" BorderBrush="White" Foreground="White" Margin="0,5,130,0" Checked="radServer_Checked" TabIndex="3"/>
             </StackPanel>
         </GroupBox>
-
     </Grid>
 </Window>

@@ -1,6 +1,6 @@
 using System;
 
-namespace <To Be Populated>
+namespace ===To Be Populated===
 {
     /// <summary>
     /// {{Table}} Class - 

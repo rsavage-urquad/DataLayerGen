@@ -213,7 +213,9 @@ namespace DataLayerGen.Classes
             line = line.Replace("{{CamelNameColName}}",GetCamelCase(NameColumn));
             line = line.Replace("{{NameColType}}", GetSpecialColType("Name", "SQL"));
             line = line.Replace("{{NameColCodeType}}", GetSpecialColType("Name", "Code"));
-            line = line.Replace("{{CamelIdColParameters}}", CamelIdColParameters());
+            line = line.Replace("{{CamelIdColParameters}}", CamelIdColParameters(false));
+            line = line.Replace("{{CamelIdColParameterVars}}", CamelIdColParameters(true));
+            line = line.Replace("{{ControllerAnnotateId}}", ControllerAnnotateId());
             line = line.Replace("{{ModifiedByColName}}", ModifiedByColumn);
 
             return line;
@@ -423,8 +425,9 @@ namespace DataLayerGen.Classes
         /// CamelIdColParameters() - Formats and return the id columns as parameters to a 
         /// method (i.e. - "{data type} {varable name}, ...")
         /// </summary>
+        /// <param name="varsOnly">Only include variables? (Not data types)</param>
         /// <returns>Id columns as parameters</returns>
-        private string CamelIdColParameters()
+        private string CamelIdColParameters(bool varsOnly)
         {
             StringBuilder sb = new StringBuilder();
             List<ColumnData> idColList = GetWorkColumnList("IdCols");
@@ -433,7 +436,28 @@ namespace DataLayerGen.Classes
             foreach (ColumnData col in idColList)
             {
                 sb.Append((isFirstTime) ? "" :  ", ");
-                sb.Append($"{DataTypeLookup.GetCodeDataType(col)} {GetCamelCase(col.ColumnName)}");
+                sb.Append((varsOnly) ? "" : DataTypeLookup.GetCodeDataType(col) + " ");
+                sb.Append(GetCamelCase(col.ColumnName));
+                isFirstTime = false;
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// ControllerAnnotateId() - Returns a string of the id columns in a format
+        /// used in the Controller Action Annotation statemment (i.e. - {tableId})
+        /// </summary>
+        /// <returns>Id columns surronded by "{" and "}".</returns>
+        private string ControllerAnnotateId()
+        {
+            StringBuilder sb = new StringBuilder();
+            List<ColumnData> idColList = GetWorkColumnList("IdCols");
+            bool isFirstTime = true;
+
+            foreach (ColumnData col in idColList)
+            {
+                sb.Append((isFirstTime) ? "" : ", ");
+                sb.Append("{" + GetCamelCase(col.ColumnName + "}"));
                 isFirstTime = false;
             }
             return sb.ToString();

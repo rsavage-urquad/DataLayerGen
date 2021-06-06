@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace <To Be Populated>
+namespace ===To Be Populated===
 {
     public class {{Table}}Dl
     {
@@ -135,8 +135,9 @@ namespace <To Be Populated>
         public int {{Table}}Insert(string cs, {{Table}} {{CamelTable}}Obj)
         {
             int retCode = 0;
+            {{SectionIf|IdIsIdentity}}
             int insertedId = 0;
-
+            {{/SectionIf}}
             using (Sql sql = new Sql(cs, "{{Schema}}.{{Table}}Ins"))
             {
 	            {{SectionIf|IdIsNotIdentity}}
@@ -171,8 +172,8 @@ namespace <To Be Populated>
                     }
                 }
             }
-
             {{SectionIf|IdIsIdentity}}
+
             // Set the inserted Id if result was success.
             if (retCode == 0)
             {

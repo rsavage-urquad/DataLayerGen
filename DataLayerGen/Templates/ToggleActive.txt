@@ -3,7 +3,7 @@ Author:
 Date:	{{Date}}
 Desc:	Toggles the Active Indicator of a row for the requested Id(s).
 Params:
-	{{Each|IdCols|[[ColName]] - }} 
+	{{Each|IdCols|@[[ColName]] - }} 
 	{{SectionIf|ModifiedByPresent}}
 	@RequestedBy - User requesting the change.
 	{{/SectionIf}}

@@ -53,6 +53,8 @@ The following is a list of the commands that can be used in a template.
 * **`{{InactiveValue}}`** - Inserts the "Active" column's Inactive value.
 * **`{{ModifiedByColName}}`** - Inserts the "Modified By" column's name.
 * **`{{CamelIdColParameters}}`** - Id column(s) as parameters to a method (i.e. - "int tableId, ...").
+* **`{{CamelIdColParameterVars}}`** - Id column(s) as parameters variables when used in a call (i.e. - "tableId, ...").
+* **`{{ControllerAnnotateId}}`** - Id column(s) as used in the Controller Action annotation (i.e. - "{tableId}, ...").
 
 ### Details for `{{Each|<Collection>|<Format>}}`
 
