@@ -26,6 +26,7 @@ This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model
 | Toggle Active | Stored Procedure to toggle the active indicator for a requested Id. |
 | C# Entity Class | POCO Class for an Entity. |
 | C# Data Layer Class | C# Class to perform SQL CRUD operations for the Entity. |
+| C# API Controller Class | C# API Controller Class to initiate CRUD operations for the Entity. |
 
 ## Template Commands
 
