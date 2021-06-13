@@ -31,10 +31,6 @@ namespace DataLayerGen
             BuildTemplateCheckboxes();
             TableItems = new ObservableCollection<ComboBoxItem>();
             PopulateTableInfo();
-
-            // HACK: Testing code.  To be removed.
-            //txtConnStr.Text = @"Data Source=RSAVAGE-DESKTOP\SQLEXPRESS;Initial Catalog=DataLayerGenDB;User ID=TestUser;Password=test123;";
-            //txtSaveLocation.Text = @"C:\Users\rsava\Temp";
         }
 
         #region Events
@@ -185,7 +181,7 @@ namespace DataLayerGen
 
             TemplateProcessor tempProc = new TemplateProcessor(template, cdList, table, txtSaveLocation.Text, txtIdCols.Text, isIdentityCol,  
                                                                nameCol, activeCol, txtActiveValue.Text, txtInactiveValue.Text, activeColDataType,
-                                                               modifiedByCol);
+                                                               modifiedByCol, txtTableAlias.Text);
             try
             {
                 result = tempProc.ProcessTemplate();

@@ -40,6 +40,7 @@ The following is a list of the commands that can be used in a template.
 * **`{{Schema}}`** - Inserts the selected table's schema name.
 * **`{{Table}}`** - Inserts the selected table's name.
 * **`{{CamelTable}}`** - Inserts the selected table's name in camel case.
+* **`{{TableAlias}}`** - Generally used for Stored Procs, this tag inserts the selected table's Alias.
 * **`{{Each|<Collection>|<Format>}}`** - Will repeat the `<Format>` result for each item in the `<Collection>` (*more details in a later section*).
 * **`{{If|<Variable>|<True Format>}}`** - Will insert the `<True Format>` if the `<Variable>` is true.  (*more details in a later section*).
 * **`{{SectionIf|<Variable>}}...{{/SectionIf}}`** - Placed on separate lines with conditional content in between.  If the condition `<Variable>` is true, the content within the tags will be included (*more details in a later section*).  At this time, embedded **`{{SectionIf|<Variable>}}...{{/SectionIf}}`** are not supported.
@@ -72,6 +73,7 @@ The following is a list of the commands that can be used in a template.
 * **`[[ColSqlType]]`** - Column's SQL Data Type (i.e. - varchar(50), money, ...).
 * **`[[ColCodeType]]`** - Column's C# Data Type (i.e. - string, decimal ...).
 * **`[[ColCodeDefaultValue]]`** - Column's C# Default Value (i.e. - 0, "", DateTime.MinValue ...).
+* **`[[TableAlias]]`** - Generally used for Stored Procs, if a Table Alias is provided, this tag inserts the table's Alias followed by a ".".
 
 ### `{{If}|...}` and `{{SectionIf|...}}` Variables
 
@@ -81,6 +83,11 @@ The following is a list of the commands that can be used in a template.
 * **`IdIsIdentity`** - True if the "Is Identity Column?" item is checked.
 * **`IdIsNotIdentity`** - True if the "Is Identity Column?" item is not checked.
 * **`ModifiedByPresent`** - True if the selected "ModifiedByColName" is not equal blank.
+* **`TableAliasPresent`** - True if the a "Table Alias" is not equal blank.
+
+#### `{{If}|...}` Embedded Tags
+
+if a Tag needs to be embedded in the `<True Format>` section of an `{{If}|...}` Tag, the Tag's braces should be escaped by surrounding them with backslashes, for example `"\{\"` and `"\}\"`.
 
 ### Modifiers
 

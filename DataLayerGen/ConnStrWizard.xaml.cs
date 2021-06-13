@@ -40,14 +40,6 @@ namespace DataLayerGen
             Password = "";
             InitializeComponent();
             ShowHideUserInfo();
-
-            // HACK: Testing code.  To be removed.
-            //txtServer.Text = @"RSAVAGE-DESKTOP\SQLEXPRESS";
-            //txtInitialCatalog.Text = "DataLayerGenDB";
-            //txtUserId.Text = "TestUser";
-            //txtPassword.Password = "test123";
-            //radServer.IsChecked = true;
-            //ShowHideUserInfo();
         }
 
         #region Events

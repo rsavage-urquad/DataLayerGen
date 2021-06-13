@@ -17,11 +17,11 @@ BEGIN
 	set nocount on;
 
     select
-    {{Each|ColList|[[ColName]][Last|:,]}}
-    from {{Schema}}.{{Table}} with(nolock)
+    {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
+    from {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
 	{{SectionIf|ActivePresent}}
 	where (
-		{{ActiveColName}} = {{ActiveValue}} OR
+		{{If|TableAliasPresent|\{\\{\TableAlias\}\\}\.}}{{ActiveColName}} = {{ActiveValue}} OR
 		@IncludeInactive = 1
 	);
 	{{/SectionIf}}

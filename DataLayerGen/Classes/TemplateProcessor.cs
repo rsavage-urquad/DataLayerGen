@@ -17,6 +17,7 @@ namespace DataLayerGen.Classes
         private List<ColumnData> ColDataList = new List<ColumnData>();
         private string SchemaName = "";
         private string TableName = "";
+        private string TableAlias = "";
         private string SaveLocation = "";
         private string[] IdColumns = new string[0];
         private bool IsIdentityColumn = false;
@@ -39,15 +40,17 @@ namespace DataLayerGen.Classes
         /// <param name="table">Schema and Table info</param>
         /// <param name="saveLoc">Save Location</param>
         /// <param name="idCols">Id Column(s)</param>
+        /// <param name="isIdentityCol">Is ID Column an Identity?</param>
         /// <param name="nameCol">Name Column</param>
         /// <param name="activeCol">Active Column</param>
         /// <param name="activeVal">Active Value</param>
         /// <param name="inactiveVal">Inactave Value</param>
         /// <param name="activeColDataType">Active Column DataType</param>
         /// <param name="modifiedByCol">Modified By Column</param>
+        /// <param name="tableAlias">Table Alias dfor Stored Procs</param>
         public TemplateProcessor(TemplateInfo templateInfo, List<ColumnData> cdList, string table, string saveLoc, string idCols, 
                                  bool isIdentityCol, string nameCol, string activeCol, string activeVal, string inactiveVal, 
-                                 string activeColDataType, string modifiedByCol)
+                                 string activeColDataType, string modifiedByCol, string tableAlias)
         {
             TemplateInfo = templateInfo;
             ColDataList = cdList;
@@ -58,6 +61,7 @@ namespace DataLayerGen.Classes
             ActiveValue = activeVal;
             InactiveValue = inactiveVal;
             ModifiedByColumn = modifiedByCol;
+            TableAlias = tableAlias;
 
             var tableNameInfo = table.Split('.');
             if (tableNameInfo.Length == 2)
@@ -204,6 +208,7 @@ namespace DataLayerGen.Classes
             line = line.Replace("{{Schema}}", SchemaName);
             line = line.Replace("{{Table}}", TableName);
             line = line.Replace("{{CamelTable}}", GetCamelCase(TableName));
+            line = line.Replace("{{TableAlias}}", TableAlias);
             line = line.Replace("{{ActiveColName}}", ActiveColumn);
             line = line.Replace("{{ActiveColType}}", GetSpecialColType("Active", "SQL"));
             line = line.Replace("{{ActiveColCodeType}}", GetSpecialColType("Active", "Code"));
@@ -255,6 +260,7 @@ namespace DataLayerGen.Classes
                 workLine = workLine.Replace("[[ColSqlType]]", item.SqlDataType);
                 workLine = workLine.Replace("[[ColCodeType]]", DataTypeLookup.GetCodeDataType(item));
                 workLine = workLine.Replace("[[ColCodeDefaultValue]]", DataTypeLookup.GetCodeDefaultValue(item));
+                workLine = workLine.Replace("[[TableAlias]]", (TableAlias == "") ?  "" : $"{TableAlias}." );
 
 
                 if (workLine.Contains("[First|"))
@@ -315,13 +321,21 @@ namespace DataLayerGen.Classes
                 case "modifiedbypresent":
                     isIfConditionTrue = (ModifiedByColumn != "");
                     break;
+                case "tablealiaspresent":
+                    isIfConditionTrue = (TableAlias != "");
+                    break;
                 default:
                     isIfConditionTrue = false;
                     break;
             }
 
-            resultLine = (isIfConditionTrue) ? cmd.Prefix + cmd.Param2 + cmd.Suffix : cmd.Prefix + cmd.Suffix;
+            string parsedParam2 = UnescapeBraces(cmd.Param2);
+
+            resultLine = (isIfConditionTrue) ? cmd.Prefix + parsedParam2 + cmd.Suffix : cmd.Prefix + cmd.Suffix;
             resultLine = (string.IsNullOrWhiteSpace(resultLine)) ? "{{Ignore}}" : resultLine;
+
+            // Reprocess Substitution in case "If" introduced any more items to substitute.
+            resultLine = PerformSubstitution(resultLine);       
 
             return resultLine;
         }
@@ -496,6 +510,17 @@ namespace DataLayerGen.Classes
             }
 
             return char.ToLower(inputStr[0]) + inputStr.Substring(1);
+        }
+
+        /// <summary>
+        /// UnescapeBraces() - Replaces excaped Braces (i.e. "\{" and "\}") with
+        /// Braces ("{" and "}").
+        /// </summary>
+        /// <param name="workStr">String to act upon.</param>
+        /// <returns>Processed String</returns>
+        private string UnescapeBraces(string workStr)
+        {
+            return workStr.Replace("\\{\\", "{").Replace("\\}\\", "}");
         }
 
         #endregion Helpers
