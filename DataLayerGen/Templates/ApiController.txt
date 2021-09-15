@@ -94,17 +94,12 @@ namespace ===To Be Populated===
         }
 
         /// <summary>
-        /// Put() - Upodates a requested {{Table}}
+        /// Put() - Updates a requested {{Table}}
         /// </summary>
         /// <param name="id">Id of {{Table}} to update</param>
         /// <param name="{{CamelTable}}Obj">{{Table}} information to update</param>
         /// <returns>Ok (HTTP 200) or Error (HTTP 404 or HTTP 400 with DB Return Code)</returns>
-        {{SectionIf|IdIsIdentity}}
-        [HttpPut("{{ControllerAnnotateId}}")]
-        {{/SectionIf}}
-        {{SectionIf|IdIsNotIdentity}}
-        [HttpPut()]
-        {{/SectionIf}}
+        [HttpPut]
         public ActionResult Put({{CamelIdColParameters}}, {{Table}} {{CamelTable}}Obj)
         {
             {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();

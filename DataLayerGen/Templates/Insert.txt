@@ -8,6 +8,14 @@ Params:
 	{{/SectionIf}}
     {{Each|ColListExceptIds|@[[ColName]] - }}
 
+Results:
+	{{SectionIf|IdIsIdentity}}
+	Id - Identity of inserted row
+	{{/SectionIf}}
+	RetCode
+		0 = Success
+		99 = DB Exception
+
 Change Log: When, Who: What
 ------------------------------------------------------------------------------------------------- */
 CREATE OR ALTER PROCEDURE  {{Schema}}.{{Table}}Ins

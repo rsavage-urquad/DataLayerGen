@@ -3,7 +3,7 @@ Author:
 Date:	{{Date}}
 Desc:	Delete a row for the requested Id(s).
 Params:
-	{{Each|IdCols|@[[ColName]] - Id to retrieve.}}
+	{{Each|IdCols|@[[ColName]] - Id to delete.}}
 
 Results:
 	RetCode
