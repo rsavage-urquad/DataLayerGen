@@ -9,7 +9,7 @@ namespace ===To Be Populated===
         #region Public Methods
 
         /// <summary>
-        /// {{Table}}GetById() - Retrieve the requested item by Id and retuens a populated object.
+        /// {{Table}}GetById() - Retrieve the requested item by Id and returns a populated object.
         /// </summary>
         /// <param name="cs">Connection String</param>
         {{Each|IdCols|/// <param name="[[CamelColName]]">Id of item to retrieve</param>}}

@@ -1,0 +1,145 @@
+﻿/*
+Generated coode expects references and "using" statements for:
+- Entity POCO Classes
+- Entity Repositry Class
+*/
+using Dapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace ===To Be Populated===
+{
+    /// <summary>
+    /// {{Table}}Controller - API to access {{Table}} information
+    /// </summary>
+    [ApiController]
+    [Route("[controller]")]
+    public class {{Table}}Controller : ControllerBase
+    {
+        private readonly ILogger<EmployeeController> _logger;
+        private readonly I{{Table}}Repository _repo;
+
+        /// <summary>
+        /// {{Table}}Controller() - Default Constructor
+        /// </summary>
+        /// <param name="logger">Injected logger</param>
+        /// <param name="repo">Injected Repository</param>
+        public {{Table}}Controller(ILogger<{{Table}}Controller> logger, I{{Table}}Repository repo)
+        {
+            _logger = logger;
+            _repo = repo;
+        }
+
+        /// <summary>
+        /// Get({{CamelIdColParameters}}) - Get {{Table}} by Id
+        /// </summary>
+        {{Each|IdCols|/// <param name="[[CamelColName]]"></param>}}
+        /// <returns>{{Table}} for for requested Id or Not Found (HTTP 404)</returns>
+        {{SectionIf|IdIsIdentity}}
+        [HttpGet("{{ControllerAnnotateId}}")]
+        {{/SectionIf}}
+        {{SectionIf|IdIsNotIdentity}}
+        [HttpGet("GetById")]
+        {{/SectionIf}}
+        public async Task<ActionResult<{{Table}}>> Get({{CamelIdColParameters}})
+        {
+            var parameters = new DynamicParameters();
+            {{Each|IdCols|parameters.Add("[[ColName]]", [[ColName]]);}}
+            {{SectionIf|ActivePresent}}
+            parameters.Add("IncludeInactive", true);
+            {{/SectionIf}}            
+
+            var result = await _repo.GetByIdAsync(parameters);
+            return (result is null) ? NotFound() : Ok(emp);
+        }
+
+---------------------------------------> Left Off Here
+
+        /// <summary>
+        /// Post() - Inserts a new {{Table}}.
+        /// </summary>
+        /// <param name="{{CamelTable}}Obj">{{Table}} information to insert</param>
+        /// <returns>Ok (HTTP 200) or Error (HTTP 400 with DB Return Code)</returns>
+        [HttpPost]
+        public ActionResult Post({{Table}} {{CamelTable}}Obj)
+        {
+            {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();
+            ===Code to set any Created Date/Time and Created By information===
+            int retCode = {{CamelTable}}Dl.{{Table}}Insert(_connStr, {{CamelTable}}Obj);
+            return (retCode == 0) ? Ok() : GetActionResult(retCode);
+        }
+
+        /// <summary>
+        /// Put() - Updates a requested {{Table}}
+        /// </summary>
+        /// <param name="id">Id of {{Table}} to update</param>
+        /// <param name="{{CamelTable}}Obj">{{Table}} information to update</param>
+        /// <returns>Ok (HTTP 200) or Error (HTTP 404 or HTTP 400 with DB Return Code)</returns>
+        [HttpPut]
+        public ActionResult Put({{CamelIdColParameters}}, {{Table}} {{CamelTable}}Obj)
+        {
+            {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();
+            {{Each|IdCols|{{CamelTable}}Obj.[[ColName]] = [[CamelColName]];}}
+            {{SectionIf|ModifiedByPresent}}
+            ===Code to set any Modified Date/Time and Modified By information===
+            {{/SectionIf}}
+            int retCode = {{CamelTable}}Dl.{{Table}}Update(_connStr, {{CamelTable}}Obj);
+            return (retCode == 0) ? Ok() : GetActionResult(retCode);
+        }
+
+        /// <summary>
+        /// ToggleActive() - Toggles the Active Indicator for the requested {{Table}}
+        /// </summary>
+        {{Each|IdCols|/// <param name="[[CamelColName]]"></param>}}
+        /// <returns>Ok (HTTP 200) or Error (HTTP 404 or HTTP 400 with DB Return Code)</returns>
+        {{SectionIf|IdIsIdentity}}
+        [HttpPut("ToggleActive/{{ControllerAnnotateId}}")]
+        {{/SectionIf}}
+        {{SectionIf|IdIsNotIdentity}}
+        [HttpPut("ToggleActive")]
+        {{/SectionIf}}
+        public ActionResult ToggleActive({{CamelIdColParameters}})
+        {
+            {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();
+            {{SectionIf|ModifiedByPresent}}
+            string modifiedBy = <Modified By information>
+            {{/SectionIf}}
+            int retCode = {{CamelTable}}Dl.{{Table}}ToggleActive(_connStr, {{CamelIdColParameterVars}}{{If|ModifiedByPresent|, modifiedBy}});
+            return (retCode == 0) ? Ok() : GetActionResult(retCode);
+        }
+
+        /// <summary>
+        /// Delete() - Delete the row for the requested {{Table}} Id
+        /// </summary>
+        {{Each|IdCols|/// <param name="[[CamelColName]]"></param>}}
+        /// <returns>Ok (HTTP 200) or Error (HTTP 404 or HTTP 400 with DB Return Code)</returns>
+        {{SectionIf|IdIsIdentity}}
+        [HttpDelete("{{ControllerAnnotateId}}")]
+        {{/SectionIf}}
+        {{SectionIf|IdIsNotIdentity}}
+        [HttpDelete()]
+        {{/SectionIf}}        
+        public ActionResult Delete({{CamelIdColParameters}})
+        {
+            {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();
+            int retCode = {{CamelTable}}Dl.{{Table}}Delete(_connStr, {{CamelIdColParameterVars}});
+            return (retCode == 0) ? Ok() : GetActionResult(retCode);
+        }
+
+        /// <summary>
+        /// GetActionResult() - Determines the appropriate Action Result based on 
+        /// the Return Code from the Data Layer.
+        /// </summary>
+        /// <param name="retCode">Return Code from the Data Layer</param>
+        /// <returns>Action Result</returns>
+        private ActionResult GetActionResult(int retCode)
+        {
+            if (retCode == 1) { return NotFound(); }
+
+            return BadRequest("DbReturnCode: " + retCode.ToString());
+        }
+
+    }
+}

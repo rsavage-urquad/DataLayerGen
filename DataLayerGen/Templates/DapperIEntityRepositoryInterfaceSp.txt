@@ -1,0 +1,15 @@
+using Dapper;
+using System.Threading.Tasks;
+// TODO: Depending on Project Setup, may need to include using for Entity Class Namespaces
+
+namespace ===To Be Populated===
+{
+    public interface I{{Table}}Repository : IGenericRepository<{{Table}}>
+    {
+        // TODO: Identify any custom repository Properties and/or Methods
+
+        {{SectionIf|ActivePresent}}
+        Task<bool> ToggleActiveAsync(DynamicParameters parameters);
+        {{/SectionIf}}
+    }
+}
