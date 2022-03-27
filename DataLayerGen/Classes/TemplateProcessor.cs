@@ -306,6 +306,9 @@ namespace DataLayerGen.Classes
                 case "activepresent":
                     isIfConditionTrue = (ActiveColumn != "");
                     break;
+                case "activenotpresent":
+                    isIfConditionTrue = (ActiveColumn == "");
+                    break;
                 case "activeisstring":
                     isIfConditionTrue = (IsActiveValueString);
                     break;
@@ -488,6 +491,7 @@ namespace DataLayerGen.Classes
             bool result = false;
 
             if (cmd.Param1.ToLower() == "activepresent") { return (ActiveColumn != ""); }
+            if (cmd.Param1.ToLower() == "activenotpresent") { return (ActiveColumn == ""); }
             if (cmd.Param1.ToLower() == "activeisstring") { return (IsActiveValueString); }
             if (cmd.Param1.ToLower() == "activeisnotstring") { return (!IsActiveValueString); }
             if (cmd.Param1.ToLower() == "idisidentity") { return IsIdentityColumn; }

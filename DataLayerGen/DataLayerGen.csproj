@@ -171,34 +171,34 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Templates\DapperIGenericRepositoryInterface.txt">
+    <None Include="Templates\DapperIGenericRepositoryInterface.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Templates\DapperIEntityRepositoryInterfaceSql.txt">
+    <None Include="Templates\DapperIEntityRepositoryInterfaceSql.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Templates\DapperEntityRepositoryClassSql.txt">
+    <None Include="Templates\DapperEntityRepositoryClassSql.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Templates\DapperIEntityRepositoryInterfaceSp.txt">
+    <None Include="Templates\DapperIEntityRepositoryInterfaceSp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Templates\DapperEntityRepositoryClassSp.txt">
+    <None Include="Templates\DapperEntityRepositoryClassSp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Templates\DapperApiController.txt">
+    <None Include="Templates\DapperApiController.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

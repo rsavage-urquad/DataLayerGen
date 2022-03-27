@@ -47,12 +47,45 @@ namespace ===To Be Populated===
             {{Table}}? result = null;
             string sql = @"SELECT
 {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
-{{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
+FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
 {{Each|IdCols|[First|WHERE:AND] [[TableAlias]][[ColName]] = @[[ColName]]}}
 ;";
 
             result = await _db.QuerySingleOrDefaultAsync<{{Table}}>(sql, parameters);
             return result;
+        }
+
+        /// <summary>
+        /// ListAllAsync() - List of all {{Table}} Objects.
+        /// </summary>
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be returned? (true/false)</param>
+        {{/SectionIf}}
+        /// <returns>List of Employee Objects.</returns>
+        public async Task<IReadOnlyList<Employee>> ListAllAsync({{If|ActivePresent|bool includeInactive = false}})
+        {
+            IEnumerable<Employee> results;
+            string sql = @"SELECT
+{{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
+FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
+{{SectionIf|ActivePresent}}
+WHERE (
+	{{If|TableAliasPresent|\{\\{\TableAlias\}\\}\.}}{{ActiveColName}} = {{ActiveValue}} OR
+	@IncludeInactive = 1
+)
+{{/SectionIf}}
+;";
+            {{SectionIf|ActivePresent}}
+            var parameters = new DynamicParameters();
+            parameters.Add("IncludeInactive", includeInactive);
+
+            results = await _db.QueryAsync<{{Table}}>(sql, parameters);
+            {{/SectionIf}}
+            {{SectionIf|ActiveNotPresent}}
+            results = await _db.QueryAsync<{{Table}}>(sql);
+            {{/SectionIf}}
+
+            return results.ToList();
         }
 
         /// <summary>
@@ -68,7 +101,7 @@ namespace ===To Be Populated===
             IEnumerable<Employee> results;
             string sql = @"SELECT
 {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
-{{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
+FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
 ~~Filter~~
 {{SectionIf|ActivePresent}}
 ~~WhereOrAnd~~ (
@@ -113,7 +146,7 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
             {
                 {{If|ActivePresent|var newId = }}await _db.QuerySingleAsync<int>(sql, entity);
                 {{SectionIf|IdIsIdentity}}
-                {{Each|IdCols|{{CamelTable}}.[[ColName]] = newId;}}
+                {{Each|IdCols|entity.[[ColName]] = newId;}}
                 {{/SectionIf}}
             }
             catch (Exception ex)
@@ -138,6 +171,7 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
 {{/SectionIf}}
 {{Each|ColListExceptIds|[[ColName]] = @[[ColName]][Last|:,]}} 
 {{Each|IdCols|[First|WHERE:AND] [[ColName]] = @[[ColName]][Last|;:]}}
+;";
 
             return await ProcessDbExecute(sql, null, entity, "No rows were updated.");
         }
@@ -151,6 +185,7 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
         {
             string sql = @"DELETE {{Schema}}.{{Table}}
 {{Each|IdCols|[First|WHERE:AND] [[ColName]] = @[[ColName]][Last|;:]}}
+";
 
             return await ProcessDbExecute(sql, parameters, null, "No rows were deleted.");
         }
@@ -167,8 +202,8 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
 {{SectionIf|ModifiedByPresent}}
 {{ModifiedByColName}} = @RequestedBy
 {{/SectionIf}}
-{{Each|IdCols|[First|WHERE:AND] [[ColName]] = @[[ColName]][Last|;:]}}"
-;"
+{{Each|IdCols|[First|WHERE:AND] [[ColName]] = @[[ColName]][Last|;:]}}
+";
 
             return await ProcessDbExecute(sql, parameters, null, "No rows were toggled.");
         }

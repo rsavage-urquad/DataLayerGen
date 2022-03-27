@@ -21,14 +21,14 @@
         <TextBox x:Name="txtConnStr" HorizontalAlignment="Left" Height="23" Margin="120,10,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="229" LostFocus="txtConnStr_LostFocus" TabIndex="0" />
         <Button x:Name="btnConnStrWizard" Content="..." HorizontalAlignment="Left" Margin="354,13,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnConnStrWizard_Click" TabIndex="1" />
         <Label x:Name="lblSaveLocation" Content="Save Location:" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.675,2.769" Foreground="White"/>
-        <TextBox x:Name="txtSaveLocation" HorizontalAlignment="Left" Height="23" Margin="120,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="229" TabIndex="2"/>
+        <TextBox x:Name="txtSaveLocation" HorizontalAlignment="Left" Height="23" Margin="120,38,0,0" VerticalAlignment="Top" Width="229" TabIndex="2"/>
         <Button x:Name="btnSaveFolderDlg" Content="..." HorizontalAlignment="Left" Margin="354,41,0,0" VerticalAlignment="Top" Width="20" RenderTransformOrigin="-0.15,0.6" Click="btnSaveFolderDlg_Click" TabIndex="3"/>
         <Label x:Name="lblTable" Content="Table:" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top" Foreground="White"/>
         <ComboBox x:Name="cboTableName" HorizontalAlignment="Left" Margin="120,67,0,0" VerticalAlignment="Top" Width="229" ItemsSource="{Binding TableItems}" SelectedItem="{Binding SelectedTableItem}" SelectionChanged="cboTableName_SelectionChanged" TabIndex="4" />
         <Label x:Name="lblTableAlias" Content="SP Table Alias:" HorizontalAlignment="Left" Margin="354,65,0,0" VerticalAlignment="Top" Foreground="White"/>
         <TextBox x:Name="txtTableAlias" HorizontalAlignment="Left" Height="23" Margin="443,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="49" TabIndex="5" />
         <Label x:Name="lblIdColumn" Content="Id Column:" HorizontalAlignment="Left" Margin="10,91,0,0" VerticalAlignment="Top" Foreground="White"/>
-        <TextBox x:Name="txtIdCols" HorizontalAlignment="Left" Height="23" Margin="120,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="229" TabIndex="6"/>
+        <TextBox x:Name="txtIdCols" HorizontalAlignment="Left" Height="23" Margin="120,94,0,0" VerticalAlignment="Top" Width="229" TabIndex="6"/>
         <Label x:Name="lblSepMsg" Content="(Separate by &quot;;&quot; or &quot;,&quot;)" HorizontalAlignment="Left" Margin="354,91,0,0" VerticalAlignment="Top" Foreground="White"/>
         <CheckBox x:Name="chkIsIdentityCol" Content="Is Identity Column?" HorizontalAlignment="Left" Margin="506,97,0,0" VerticalAlignment="Top" Foreground="White" TabIndex="7" IsChecked="True" Grid.ColumnSpan="2"/>
         <Label x:Name="lblNameColumn" Content="Name Column:" HorizontalAlignment="Left" Margin="10,118,0,0" VerticalAlignment="Top" Foreground="White"/>

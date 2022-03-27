@@ -8,6 +8,7 @@ namespace ===To Be Populated===
     {
         // TODO: Identify any custom repository Properties and/or Methods
 
+        Task<IReadOnlyList<{{Table}}>> ListAllAsync({{If|ActivePresent|, bool includeInactive = false}});
         {{SectionIf|ActivePresent}}
         Task<bool> ToggleActiveAsync(DynamicParameters parameters);
         {{/SectionIf}}

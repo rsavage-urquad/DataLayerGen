@@ -33,6 +33,25 @@ namespace ===To Be Populated===
         }
 
         /// <summary>
+        /// Get() - Returns all {{Table}} items. 
+        /// </summary>
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be included?</param>
+        {{/SectionIf}}
+        /// <returns>List of {{Table}} objects (empty array if there are no items)</returns>
+        [HttpGet()]
+        public async Task<ActionResult<List<{{Table}}>>> Get({{If|ActivePresent|bool includeInactive = false}})
+        {
+            {{SectionIf|ActivePresent}}
+            var results = await _repo.ListAllAsync(includeInactive);
+            {{/SectionIf}}            
+            {{SectionIf|ActiveNotPresent}}
+            var results = await _repo.ListAllAsync();
+            {{/SectionIf}}            
+            return Ok(results);
+        }
+
+        /// <summary>
         /// Get({{CamelIdColParameters}}) - Get {{Table}} by Id
         /// </summary>
         {{Each|IdCols|/// <param name="[[CamelColName]]"></param>}}
@@ -46,99 +65,86 @@ namespace ===To Be Populated===
         public async Task<ActionResult<{{Table}}>> Get({{CamelIdColParameters}})
         {
             var parameters = new DynamicParameters();
-            {{Each|IdCols|parameters.Add("[[ColName]]", [[ColName]]);}}
+            {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
             {{SectionIf|ActivePresent}}
             parameters.Add("IncludeInactive", true);
             {{/SectionIf}}            
 
             var result = await _repo.GetByIdAsync(parameters);
-            return (result is null) ? NotFound() : Ok(emp);
+            return (result is null) ? NotFound() : Ok(result);
         }
 
----------------------------------------> Left Off Here
-
         /// <summary>
-        /// Post() - Inserts a new {{Table}}.
+        /// Post() - Inserts an entity object
         /// </summary>
-        /// <param name="{{CamelTable}}Obj">{{Table}} information to insert</param>
-        /// <returns>Ok (HTTP 200) or Error (HTTP 400 with DB Return Code)</returns>
+        /// <param name="entity">{{Table}} object</param>
+        /// <returns>200 with Id of inserted item if successful, otherwise 400 with details</returns>
         [HttpPost]
-        public ActionResult Post({{Table}} {{CamelTable}}Obj)
+        public async Task<ActionResult<int>> Post({{Table}} entity)
         {
-            {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();
-            ===Code to set any Created Date/Time and Created By information===
-            int retCode = {{CamelTable}}Dl.{{Table}}Insert(_connStr, {{CamelTable}}Obj);
-            return (retCode == 0) ? Ok() : GetActionResult(retCode);
+            var resp = await _repo.InsertAsync(entity);
+            return (resp)
+                {{SectionIf|IdIsIdentity}}
+                ? Ok( new { 
+                    {{Each|IdCols|[[CamelColName]] = entity.[[ColName]][Last|:, ]}} 
+                }) 
+                {{/SectionIf}}
+                {{SectionIf|IdIsNotIdentity}}
+                ? Ok() 
+                {{/SectionIf}}
+                : BadRequest(new { message = _repo.Message });
         }
 
         /// <summary>
-        /// Put() - Updates a requested {{Table}}
+        /// Put() - Updates an entity object
         /// </summary>
-        /// <param name="id">Id of {{Table}} to update</param>
-        /// <param name="{{CamelTable}}Obj">{{Table}} information to update</param>
-        /// <returns>Ok (HTTP 200) or Error (HTTP 404 or HTTP 400 with DB Return Code)</returns>
+        /// <param name="entity">{{Table}} object</param>
+        /// <returns>204 if successful, otherwise 400 with details</returns>
         [HttpPut]
-        public ActionResult Put({{CamelIdColParameters}}, {{Table}} {{CamelTable}}Obj)
+        public async Task<ActionResult> Put({{Table}} entity)
         {
-            {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();
-            {{Each|IdCols|{{CamelTable}}Obj.[[ColName]] = [[CamelColName]];}}
-            {{SectionIf|ModifiedByPresent}}
-            ===Code to set any Modified Date/Time and Modified By information===
-            {{/SectionIf}}
-            int retCode = {{CamelTable}}Dl.{{Table}}Update(_connStr, {{CamelTable}}Obj);
-            return (retCode == 0) ? Ok() : GetActionResult(retCode);
+            var resp = await _repo.UpdateAsync(entity);
+            return (resp) ? NoContent() : BadRequest(new { message = _repo.Message });
         }
 
         /// <summary>
-        /// ToggleActive() - Toggles the Active Indicator for the requested {{Table}}
+        /// Delete() - Deletes an item based on Id
         /// </summary>
-        {{Each|IdCols|/// <param name="[[CamelColName]]"></param>}}
-        /// <returns>Ok (HTTP 200) or Error (HTTP 404 or HTTP 400 with DB Return Code)</returns>
-        {{SectionIf|IdIsIdentity}}
-        [HttpPut("ToggleActive/{{ControllerAnnotateId}}")]
-        {{/SectionIf}}
-        {{SectionIf|IdIsNotIdentity}}
-        [HttpPut("ToggleActive")]
-        {{/SectionIf}}
-        public ActionResult ToggleActive({{CamelIdColParameters}})
-        {
-            {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();
-            {{SectionIf|ModifiedByPresent}}
-            string modifiedBy = <Modified By information>
-            {{/SectionIf}}
-            int retCode = {{CamelTable}}Dl.{{Table}}ToggleActive(_connStr, {{CamelIdColParameterVars}}{{If|ModifiedByPresent|, modifiedBy}});
-            return (retCode == 0) ? Ok() : GetActionResult(retCode);
-        }
-
-        /// <summary>
-        /// Delete() - Delete the row for the requested {{Table}} Id
-        /// </summary>
-        {{Each|IdCols|/// <param name="[[CamelColName]]"></param>}}
-        /// <returns>Ok (HTTP 200) or Error (HTTP 404 or HTTP 400 with DB Return Code)</returns>
+        {{Each|IdCols|/// <param name="[[CamelColName]]">[[ColName]] info</param>}}
+        /// <returns>204 if successful, otherwise 400 with details</returns>
         {{SectionIf|IdIsIdentity}}
         [HttpDelete("{{ControllerAnnotateId}}")]
         {{/SectionIf}}
         {{SectionIf|IdIsNotIdentity}}
         [HttpDelete()]
         {{/SectionIf}}        
-        public ActionResult Delete({{CamelIdColParameters}})
+        public async Task<ActionResult> Delete({{CamelIdColParameters}})
         {
-            {{Table}}Dl {{CamelTable}}Dl = new {{Table}}Dl();
-            int retCode = {{CamelTable}}Dl.{{Table}}Delete(_connStr, {{CamelIdColParameterVars}});
-            return (retCode == 0) ? Ok() : GetActionResult(retCode);
+            var parameters = new DynamicParameters();
+            {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
+
+            var resp = await _repo.DeleteAsync(parameters);
+            return (resp) ? NoContent() : BadRequest(new { message = _repo.Message });
         }
 
         /// <summary>
-        /// GetActionResult() - Determines the appropriate Action Result based on 
-        /// the Return Code from the Data Layer.
+        /// ToggleActive() - Toggles the Active indicator for the requested Id
         /// </summary>
-        /// <param name="retCode">Return Code from the Data Layer</param>
-        /// <returns>Action Result</returns>
-        private ActionResult GetActionResult(int retCode)
+        {{Each|IdCols|/// <param name="[[CamelColName]]">[[ColName]] info<</param>}}
+        /// <returns>204 if successful, otherwise 400 with details</returns>
+        {{SectionIf|IdIsIdentity}}
+        [HttpPut("ToggleActive/{{ControllerAnnotateId}}")]
+        {{/SectionIf}}
+        {{SectionIf|IdIsNotIdentity}}
+        [HttpPut("ToggleActive")]
+        {{/SectionIf}}
+        public async Task<ActionResult> ToggleActive({{CamelIdColParameters}})
         {
-            if (retCode == 1) { return NotFound(); }
+            var parameters = new DynamicParameters();
+            {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
 
-            return BadRequest("DbReturnCode: " + retCode.ToString());
+            var resp = await _repo.ToggleActiveAsync(parameters);
+            return (resp) ? NoContent() : BadRequest(new { message = _repo.Message });
         }
 
     }

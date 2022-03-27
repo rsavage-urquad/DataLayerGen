@@ -44,8 +44,29 @@ namespace ===To Be Populated===
         public async Task<{{Table}}> GetByIdAsync(DynamicParameters parameters)
         {
             {{Table}}? result = null;
-            result = await _db.QuerySingleOrDefaultAsync<{{Table}}>("{{Schema}}.{{Table}}GetById"," parameters, commandType: CommandType.StoredProcedure);
+            result = await _db.QuerySingleOrDefaultAsync<{{Table}}>("{{Schema}}.{{Table}}GetById", parameters, commandType: CommandType.StoredProcedure);
             return result;
+        }
+
+        /// <summary>
+        /// ListAllAsync() - List of all {{Table}} Objects.
+        /// </summary>
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be returned? (true/false)</param>
+        {{/SectionIf}}
+        /// <returns>List of Employee Objects.</returns>
+        public async Task<IReadOnlyList<Employee>> ListAllAsync({{If|ActivePresent|bool includeInactive = false}})
+        {
+            {{SectionIf|ActivePresent}}
+            var parameters = new DynamicParameters();
+            parameters.Add("IncludeInactive", includeInactive);
+
+            IEnumerable<Employee> results = await _db.QueryAsync<{{Table}}>("{{Schema}}.{{Table}}List", parameters, commandType: CommandType.StoredProcedure);
+            {{/SectionIf}}
+            {{SectionIf|ActiveNotPresent}}
+            IEnumerable<Employee> results = await _db.QueryAsync<{{Table}}>("{{Schema}}.{{Table}}List", commandType: CommandType.StoredProcedure);
+            {{/SectionIf}}
+            return results.ToList();
         }
 
         /// <summary>

@@ -58,5 +58,41 @@
     "title": "API Controller",
     "templateFilename": "ApiController.txt",
     "outputName": "{{Table}}Controller.cs"
+  },
+  {
+    "templateId": "DapperIGenericRepositoryInterface",
+    "title": "Dapper IGenericRepository Interface",
+    "templateFilename": "DapperIGenericRepositoryInterface.txt",
+    "outputName": "DapperIGenericRepository.cs"
+  },
+  {
+    "templateId": "DapperIEntityRepositoryInterfaceSql",
+    "title": "Dapper IEntityRepository Interface (Sql)",
+    "templateFilename": "DapperIEntityRepositoryInterfaceSql.txt",
+    "outputName": "DapperI{{Table}}RepositorySql.cs"
+  },
+  {
+    "templateId": "DapperEntityRepositoryClassSql",
+    "title": "Dapper EntityRepository Class (Sql)",
+    "templateFilename": "DapperEntityRepositoryClassSql.txt",
+    "outputName": "Dapper{{Table}}RepositorySql.cs"
+  },
+  {
+    "templateId": "DapperIEntityRepositoryInterfaceSp",
+    "title": "Dapper IEntityRepository Interface (SP)",
+    "templateFilename": "DapperIEntityRepositoryInterfaceSp.txt",
+    "outputName": "DapperI{{Table}}RepositorySp.cs"
+  },
+  {
+    "templateId": "DapperEntityRepositoryClassSp",
+    "title": "Dapper EntityRepository Class (SP)",
+    "templateFilename": "DapperEntityRepositoryClassSp.txt",
+    "outputName": "Dapper{{Table}}RepositorySp.cs"
+  },
+  {
+    "templateId": "DapperApiController",
+    "title": "Dapper API Controller",
+    "templateFilename": "DapperApiController.txt",
+    "outputName": "Dapper{{Table}}Controller.cs"
   }
 ]
