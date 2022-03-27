@@ -1,0 +1,181 @@
+using Dapper;
+using System.Data;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+// TODO: Depending on Project Setup, may need to include using for Repository Interfaces and Entity Class Namespaces
+
+namespace ===To Be Populated===
+{
+    /// <summary>
+    /// {{Table}}Repository Class - Access methods for the {{Table}} information.
+    /// </summary>
+    public class {{Table}}Repository : I{{Table}}Repository
+    {
+        #region Properties
+
+        private readonly IDbConnection _db;
+        public string Message { get; set; }
+
+        #endregion Properties
+
+        #region Constructor(s)
+
+        /// <summary>
+        /// {{Table}}Repository() - Default constructor
+        /// </summary>
+        /// <param name="db">Injected Database Connection</param>
+        public {{Table}}Repository(IDbConnection db)
+        {
+            _db = db;
+            Message = "";
+        }
+
+        #endregion Constructor(s)
+
+        #region Public Methods
+
+        /// <summary>
+        /// GetByIdAsync() - Retrieve the {{Table}} object by Id
+        /// </summary>
+        /// <param name="parameters">Dyanmic Parameters object containing the Id(s) and the @IncludeInactive value</param>
+        /// <returns>{{Table}} Object</returns>
+        public async Task<{{Table}}> GetByIdAsync(DynamicParameters parameters)
+        {
+            {{Table}}? result = null;
+            result = await _db.QuerySingleOrDefaultAsync<{{Table}}>("{{Schema}}.{{Table}}GetById", parameters, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+
+        /// <summary>
+        /// ListAllAsync() - List of all {{Table}} Objects.
+        /// </summary>
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be returned? (true/false)</param>
+        {{/SectionIf}}
+        /// <returns>List of Employee Objects.</returns>
+        public async Task<IReadOnlyList<Employee>> ListAllAsync({{If|ActivePresent|bool includeInactive = false}})
+        {
+            {{SectionIf|ActivePresent}}
+            var parameters = new DynamicParameters();
+            parameters.Add("IncludeInactive", includeInactive);
+
+            IEnumerable<Employee> results = await _db.QueryAsync<{{Table}}>("{{Schema}}.{{Table}}List", parameters, commandType: CommandType.StoredProcedure);
+            {{/SectionIf}}
+            {{SectionIf|ActiveNotPresent}}
+            IEnumerable<Employee> results = await _db.QueryAsync<{{Table}}>("{{Schema}}.{{Table}}List", commandType: CommandType.StoredProcedure);
+            {{/SectionIf}}
+            return results.ToList();
+        }
+
+        /// <summary>
+        /// InsertAsync() - Inserts an {{Table}} object
+        /// </summary>
+        /// <param name="entity">{{Table}} Object</param>
+        /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
+        public async Task<bool> InsertAsync({{Table}} entity)
+        {
+            bool result = true;
+
+            var parameters = new DynamicParameters();
+
+	        {{SectionIf|IdIsNotIdentity}}
+	        {{Each|IdCols|parameters.Add("[[ColName]]", entity.[[ColName]]);}}
+	        {{/SectionIf}}
+            {{Each|ColListExceptIds|parameters.Add("[[ColName]]", entity.[[ColName]]);}}
+
+            try
+            {
+                var spResults = await _db.QuerySingleAsync<dynamic>("{{Schema}}.{{Table}}Ins", parameters, commandType: CommandType.StoredProcedure);
+                
+                if (spResults.RetCode != 0)
+                {
+                    Message = "Exception occured during Insert";
+                    result = false;
+                }
+                {{SectionIf|IdIsIdentity}}
+                else
+                {
+                    {{Each|IdCols|entity.[[ColName]] = spResults.Id;}}
+                }
+                {{/SectionIf}}
+            }
+            catch (Exception ex)
+            {
+                Message = ex.Message;
+                result = false;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// UpdateAsync() - Updates an {{Table}} object
+        /// </summary>
+        /// <param name="entity">{{Table}} object</param>
+        /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
+        public async Task<bool> UpdateAsync({{Table}} entity)
+        {
+            var spResults = await _db.QuerySingleAsync<int>("{{Schema}}.{{Table}}Upd", entity, commandType: CommandType.StoredProcedure);
+            return ParseSpResult(spResults);
+        }
+
+        /// <summary>
+        /// DeleteAsync() - Deletes an {{Table}} based on the Id
+        /// </summary>
+        /// <param name="parameters">Dyanmic Parameters object containing the Id(s)</param>
+        /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
+        public async Task<bool> DeleteAsync(DynamicParameters parameters)
+        {
+            var spResults = await _db.QuerySingleAsync<int>("{{Schema}}.{{Table}}Del", parameters, commandType: CommandType.StoredProcedure);
+            return ParseSpResult(spResults);
+        }
+
+        /// <summary>
+        /// ToggleActiveAsync() - Toggles the Active Indicator for a/an {{Table}}
+        /// </summary>
+        /// <param name="parameters">Dyanmic Parameters object containing the Id(s)</param>
+        /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
+        public async Task<bool> ToggleActiveAsync(DynamicParameters parameters)
+        {
+            var spResults = await _db.QuerySingleAsync<int>("{{Schema}}.{{Table}}ToggleActive", parameters, commandType: CommandType.StoredProcedure);
+            return ParseSpResult(spResults);
+        }
+
+        #endregion Public Methods
+
+        #region Protected/Private Methods
+
+        /// <summary>
+        /// ParseSpResult() - Parses a Stored Procedure result and set Message and return code.
+        /// </summary>
+        /// <param name="spResults">Stored Procedure result</param>
+        /// <returns>True/False</returns>
+        protected bool ParseSpResult(int spResults)
+        {
+            bool result = true;
+            switch (spResults)
+            {
+                case 0:
+                    break;
+                case 1:
+                    Message = "No rows were updated.";
+                    result = false;
+                    break;
+                case 99:
+                    Message = "Exception occurred during Database processing.";
+                    result = false;
+                    break;
+                default:
+                    Message = $"Unknoun Exception - {spResults}";
+                    result = false;
+                    break;
+            }
+            return result;
+        }
+
+        #endregion Protected/Private Methods
+
+    }
+}

@@ -1,0 +1,151 @@
+﻿/*
+Generated coode expects references and "using" statements for:
+- Entity POCO Classes
+- Entity Repositry Class
+*/
+using Dapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace ===To Be Populated===
+{
+    /// <summary>
+    /// {{Table}}Controller - API to access {{Table}} information
+    /// </summary>
+    [ApiController]
+    [Route("[controller]")]
+    public class {{Table}}Controller : ControllerBase
+    {
+        private readonly ILogger<EmployeeController> _logger;
+        private readonly I{{Table}}Repository _repo;
+
+        /// <summary>
+        /// {{Table}}Controller() - Default Constructor
+        /// </summary>
+        /// <param name="logger">Injected logger</param>
+        /// <param name="repo">Injected Repository</param>
+        public {{Table}}Controller(ILogger<{{Table}}Controller> logger, I{{Table}}Repository repo)
+        {
+            _logger = logger;
+            _repo = repo;
+        }
+
+        /// <summary>
+        /// Get() - Returns all {{Table}} items. 
+        /// </summary>
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be included?</param>
+        {{/SectionIf}}
+        /// <returns>List of {{Table}} objects (empty array if there are no items)</returns>
+        [HttpGet()]
+        public async Task<ActionResult<List<{{Table}}>>> Get({{If|ActivePresent|bool includeInactive = false}})
+        {
+            {{SectionIf|ActivePresent}}
+            var results = await _repo.ListAllAsync(includeInactive);
+            {{/SectionIf}}            
+            {{SectionIf|ActiveNotPresent}}
+            var results = await _repo.ListAllAsync();
+            {{/SectionIf}}            
+            return Ok(results);
+        }
+
+        /// <summary>
+        /// Get({{CamelIdColParameters}}) - Get {{Table}} by Id
+        /// </summary>
+        {{Each|IdCols|/// <param name="[[CamelColName]]"></param>}}
+        /// <returns>{{Table}} for for requested Id or Not Found (HTTP 404)</returns>
+        {{SectionIf|IdIsIdentity}}
+        [HttpGet("{{ControllerAnnotateId}}")]
+        {{/SectionIf}}
+        {{SectionIf|IdIsNotIdentity}}
+        [HttpGet("GetById")]
+        {{/SectionIf}}
+        public async Task<ActionResult<{{Table}}>> Get({{CamelIdColParameters}})
+        {
+            var parameters = new DynamicParameters();
+            {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
+            {{SectionIf|ActivePresent}}
+            parameters.Add("IncludeInactive", true);
+            {{/SectionIf}}            
+
+            var result = await _repo.GetByIdAsync(parameters);
+            return (result is null) ? NotFound() : Ok(result);
+        }
+
+        /// <summary>
+        /// Post() - Inserts an entity object
+        /// </summary>
+        /// <param name="entity">{{Table}} object</param>
+        /// <returns>200 with Id of inserted item if successful, otherwise 400 with details</returns>
+        [HttpPost]
+        public async Task<ActionResult<int>> Post({{Table}} entity)
+        {
+            var resp = await _repo.InsertAsync(entity);
+            return (resp)
+                {{SectionIf|IdIsIdentity}}
+                ? Ok( new { 
+                    {{Each|IdCols|[[CamelColName]] = entity.[[ColName]][Last|:, ]}} 
+                }) 
+                {{/SectionIf}}
+                {{SectionIf|IdIsNotIdentity}}
+                ? Ok() 
+                {{/SectionIf}}
+                : BadRequest(new { message = _repo.Message });
+        }
+
+        /// <summary>
+        /// Put() - Updates an entity object
+        /// </summary>
+        /// <param name="entity">{{Table}} object</param>
+        /// <returns>204 if successful, otherwise 400 with details</returns>
+        [HttpPut]
+        public async Task<ActionResult> Put({{Table}} entity)
+        {
+            var resp = await _repo.UpdateAsync(entity);
+            return (resp) ? NoContent() : BadRequest(new { message = _repo.Message });
+        }
+
+        /// <summary>
+        /// Delete() - Deletes an item based on Id
+        /// </summary>
+        {{Each|IdCols|/// <param name="[[CamelColName]]">[[ColName]] info</param>}}
+        /// <returns>204 if successful, otherwise 400 with details</returns>
+        {{SectionIf|IdIsIdentity}}
+        [HttpDelete("{{ControllerAnnotateId}}")]
+        {{/SectionIf}}
+        {{SectionIf|IdIsNotIdentity}}
+        [HttpDelete()]
+        {{/SectionIf}}        
+        public async Task<ActionResult> Delete({{CamelIdColParameters}})
+        {
+            var parameters = new DynamicParameters();
+            {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
+
+            var resp = await _repo.DeleteAsync(parameters);
+            return (resp) ? NoContent() : BadRequest(new { message = _repo.Message });
+        }
+
+        /// <summary>
+        /// ToggleActive() - Toggles the Active indicator for the requested Id
+        /// </summary>
+        {{Each|IdCols|/// <param name="[[CamelColName]]">[[ColName]] info<</param>}}
+        /// <returns>204 if successful, otherwise 400 with details</returns>
+        {{SectionIf|IdIsIdentity}}
+        [HttpPut("ToggleActive/{{ControllerAnnotateId}}")]
+        {{/SectionIf}}
+        {{SectionIf|IdIsNotIdentity}}
+        [HttpPut("ToggleActive")]
+        {{/SectionIf}}
+        public async Task<ActionResult> ToggleActive({{CamelIdColParameters}})
+        {
+            var parameters = new DynamicParameters();
+            {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
+
+            var resp = await _repo.ToggleActiveAsync(parameters);
+            return (resp) ? NoContent() : BadRequest(new { message = _repo.Message });
+        }
+
+    }
+}

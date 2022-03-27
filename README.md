@@ -1,6 +1,6 @@
 # DataLayerGen
 
-This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model and Data Layer for a Table. The results are not intended to be a 100% solution, just a starting point.
+This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model and Data Layer for a Table. The project will also generate a Dapper Data Layer using a Repository pattern.  The results are not intended to be a 100% solution, just a starting point.
 
 ## Setup
 
@@ -27,6 +27,14 @@ This C# project is a Code Generator to create MS SQL Stored Procedures, C# Model
 | C# Entity Class | POCO Class for an Entity. |
 | C# Data Layer Class | C# Class to perform SQL CRUD operations for the Entity. |
 | C# API Controller Class | C# API Controller Class to initiate CRUD operations for the Entity. |
+|C# IGenericRepository Interface|C# Interface for a Generic Repository (**Dapper**)|
+|C# I`Entity`Repository Interface|C# Interface for an Entity Repository Pattern (**Dapper** using SQL)|
+|C# I`Entity`Repository Class|C# Class for an Entity Repository Pattern (**Dapper** using SQL)|
+|C# I`Entity`Repository Interface|C# Interface for an Entity Repository Pattern (__Dapper__ calling Stored Procs)|
+|C# I`Entity`Repository Class|C# Class for an Entity Repository Pattern (**Dapper** calling Stored Procs)|
+|C# API Controller Class using Repository | C# API Controller Class to initiate CRUD operations for the Entity (**Dapper** Repository). |
+
+The **Dapper** related items were added to support the Dapper ORM.  The Repository Pattern implementation was inspired from ["Dapper in ASP.NET Core with Repository Pattern"](https://codewithmukesh.com/blog/dapper-in-aspnet-core/).  There are two versions of the Entity Repository Interface and Class, one is using Dapper with SQL and the other is using Dapper with Stored Procedures.
 
 ## Template Commands
 
@@ -77,7 +85,8 @@ The following is a list of the commands that can be used in a template.
 
 ### `{{If}|...}` and `{{SectionIf|...}}` Variables
 
-* **`ActivePresent`** - True if the selected "ActiveColName" is not equal blank.
+* **`ActivePresent`** - True if an "ActiveColName" was selected.
+* **`ActiveNotPresent`** - True if no "ActiveColName" was selected.
 * **`ActiveIsString`** - True if the entered "Active" value is a string (or character).
 * **`ActiveIsNotString`** - True if the entered "Active" value is not a string (or character).
 * **`IdIsIdentity`** - True if the "Is Identity Column?" item is checked.
