@@ -18,7 +18,7 @@ namespace ===To Be Populated===
     [Route("[controller]")]
     public class {{Table}}Controller : ControllerBase
     {
-        private readonly ILogger<EmployeeController> _logger;
+        private readonly ILogger<{{Table}}Controller> _logger;
         private readonly I{{Table}}Repository _repo;
 
         /// <summary>
@@ -55,6 +55,9 @@ namespace ===To Be Populated===
         /// Get({{CamelIdColParameters}}) - Get {{Table}} by Id
         /// </summary>
         {{Each|IdCols|/// <param name="[[CamelColName]]"></param>}}
+        {{SectionIf|ActivePresent}}
+        /// <param name="includeInactive">Should inactive items be included?</param>
+        {{/SectionIf}}
         /// <returns>{{Table}} for for requested Id or Not Found (HTTP 404)</returns>
         {{SectionIf|IdIsIdentity}}
         [HttpGet("{{ControllerAnnotateId}}")]
@@ -62,12 +65,12 @@ namespace ===To Be Populated===
         {{SectionIf|IdIsNotIdentity}}
         [HttpGet("GetById")]
         {{/SectionIf}}
-        public async Task<ActionResult<{{Table}}>> Get({{CamelIdColParameters}})
+        public async Task<ActionResult<{{Table}}>> Get({{CamelIdColParameters}}{{If|ActivePresent|, bool includeInactive = false}})
         {
             var parameters = new DynamicParameters();
             {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
             {{SectionIf|ActivePresent}}
-            parameters.Add("IncludeInactive", true);
+            parameters.Add("IncludeInactive", includeInactive);
             {{/SectionIf}}            
 
             var result = await _repo.GetByIdAsync(parameters);
@@ -130,7 +133,10 @@ namespace ===To Be Populated===
         /// <summary>
         /// ToggleActive() - Toggles the Active indicator for the requested Id
         /// </summary>
-        {{Each|IdCols|/// <param name="[[CamelColName]]">[[ColName]] info<</param>}}
+        {{Each|IdCols|/// <param name="[[CamelColName]]">[[ColName]] info</param>}}
+	    {{SectionIf|ModifiedByPresent}}
+	    /// <param name="requestedBy">RequestedBy Info</param>
+	    {{/SectionIf}}
         /// <returns>204 if successful, otherwise 400 with details</returns>
         {{SectionIf|IdIsIdentity}}
         [HttpPut("ToggleActive/{{ControllerAnnotateId}}")]
@@ -138,10 +144,13 @@ namespace ===To Be Populated===
         {{SectionIf|IdIsNotIdentity}}
         [HttpPut("ToggleActive")]
         {{/SectionIf}}
-        public async Task<ActionResult> ToggleActive({{CamelIdColParameters}})
+        public async Task<ActionResult> ToggleActive({{CamelIdColParameters}}{If|ModifiedByPresent|, string requestedBy}})
         {
             var parameters = new DynamicParameters();
             {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
+            {{SectionIf|ModifiedByPresent}}
+            parameters.Add("RequestedBy", requestedBy);
+            {{/SectionIf}}
 
             var resp = await _repo.ToggleActiveAsync(parameters);
             return (resp) ? NoContent() : BadRequest(new { message = _repo.Message });

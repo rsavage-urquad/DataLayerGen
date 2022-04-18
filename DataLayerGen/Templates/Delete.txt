@@ -24,6 +24,16 @@ BEGIN
 	declare @rowCount int;
 
 	set @RetCode = 0;
+
+	-- TODO: If Deletion could cause REFERENCE Constraint issue, you may want to include a check.  For example
+	/*
+	if exists(select 1 from SomeTableThatDependsOnThisTable where ThisTableId = @IdBeingDeleted)
+	begin
+		set @RetCode = 90;
+		goto BypassProcessing;		// Jump to point just before "select @RetCode as RetCode;"
+	end
+	*/
+
 	begin try
 		begin tran {{Table}}Del;
 

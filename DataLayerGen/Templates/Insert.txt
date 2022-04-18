@@ -34,6 +34,8 @@ BEGIN
 	begin try
 	    begin tran {{Table}}Ins;
 
+		-- TODO: May wish to not include all column on insert (i.e. - ModifiedBy and ModifiedDate ...)
+		-- TODO: May wish to set values manually (i.e. - "CreatedDate = getdate()")
 		insert into {{Schema}}.{{Table}} (
 			{{SectionIf|IdIsNotIdentity}}
 			{{Each|IdCols|[[ColName]],}}
