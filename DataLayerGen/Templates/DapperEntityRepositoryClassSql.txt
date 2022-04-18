@@ -61,10 +61,10 @@ FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} wit
         {{SectionIf|ActivePresent}}
         /// <param name="includeInactive">Should inactive items be returned? (true/false)</param>
         {{/SectionIf}}
-        /// <returns>List of Employee Objects.</returns>
-        public async Task<IReadOnlyList<Employee>> ListAllAsync({{If|ActivePresent|bool includeInactive = false}})
+        /// <returns>List of {{Table}} Objects.</returns>
+        public async Task<IReadOnlyList<{{Table}}>> ListAllAsync({{If|ActivePresent|bool includeInactive = false}})
         {
-            IEnumerable<Employee> results;
+            IEnumerable<{{Table}}> results;
             string sql = @"SELECT
 {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
 FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
@@ -95,10 +95,10 @@ WHERE (
         /// <param name="orderBy">Order by clause</param>
         /// <param name="parameters">Dyanmic Parameters object containing parameters for Filtering clause and 
         /// the @IncludeInactive value</param>
-        /// <returns>List of Employee Objects meeting the filter criteria.</returns>
-        public async Task<IReadOnlyList<Employee>> ListByFilterAsync(string filter, string orderBy, DynamicParameters parameters)
+        /// <returns>List of {{Table}} Objects meeting the filter criteria.</returns>
+        public async Task<IReadOnlyList<{{Table}}>> ListByFilterAsync(string filter, string orderBy, DynamicParameters parameters)
         {
-            IEnumerable<Employee> results;
+            IEnumerable<{{Table}}> results;
             string sql = @"SELECT
 {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
 FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
@@ -126,6 +126,9 @@ FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} wit
         public async Task<bool> InsertAsync({{Table}} entity)
         {
             bool result = true;
+
+            // TODO: May want to remove any unwanted columns (like ModifiedBy and/or ModifiedDate)
+            // TODO: Also may want to set some column values via SQL (i.e. "col = GETDATE()")
             string sql = @"INSERT INTO {{Schema}}.{{Table}} (
     {{SectionIf|IdIsNotIdentity}}
     {{Each|IdCols|[[ColName]],}}
@@ -165,6 +168,8 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
         public async Task<bool> UpdateAsync({{Table}} entity)
         {
+            // TODO: May want to remove any unwanted columns (like CreatedBy and/or CreatedDate)
+            // TODO: Also may want to set column values via SQL (i.e. "col = GETDATE()")
             string sql = @"UPDATE {{Schema}}.{{Table}} SET
 {{SectionIf|IdIsNotIdentity}}
 {{Each|IdCols|[[ColName]] = @[[ColName]],}}
@@ -221,7 +226,7 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
         /// <param name="entity">Entity Object</param>
         /// <param name="noRowsAffectedMsg">Value to set Message if no row were affected</param>
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
-        protected async Task<bool> ProcessDbExecute(string sql, DynamicParameters? parameters, Employee? entity, string noRowsAffectedMsg)
+        protected async Task<bool> ProcessDbExecute(string sql, DynamicParameters? parameters, {{Table}}? entity, string noRowsAffectedMsg)
         {
             bool result = true;
             try

@@ -54,17 +54,17 @@ namespace ===To Be Populated===
         {{SectionIf|ActivePresent}}
         /// <param name="includeInactive">Should inactive items be returned? (true/false)</param>
         {{/SectionIf}}
-        /// <returns>List of Employee Objects.</returns>
-        public async Task<IReadOnlyList<Employee>> ListAllAsync({{If|ActivePresent|bool includeInactive = false}})
+        /// <returns>List of {{Table}} Objects.</returns>
+        public async Task<IReadOnlyList<{{Table}}>> ListAllAsync({{If|ActivePresent|bool includeInactive = false}})
         {
             {{SectionIf|ActivePresent}}
             var parameters = new DynamicParameters();
             parameters.Add("IncludeInactive", includeInactive);
 
-            IEnumerable<Employee> results = await _db.QueryAsync<{{Table}}>("{{Schema}}.{{Table}}List", parameters, commandType: CommandType.StoredProcedure);
+            IEnumerable<{{Table}}> results = await _db.QueryAsync<{{Table}}>("{{Schema}}.{{Table}}List", parameters, commandType: CommandType.StoredProcedure);
             {{/SectionIf}}
             {{SectionIf|ActiveNotPresent}}
-            IEnumerable<Employee> results = await _db.QueryAsync<{{Table}}>("{{Schema}}.{{Table}}List", commandType: CommandType.StoredProcedure);
+            IEnumerable<{{Table}}> results = await _db.QueryAsync<{{Table}}>("{{Schema}}.{{Table}}List", commandType: CommandType.StoredProcedure);
             {{/SectionIf}}
             return results.ToList();
         }
@@ -77,9 +77,9 @@ namespace ===To Be Populated===
         public async Task<bool> InsertAsync({{Table}} entity)
         {
             bool result = true;
-
             var parameters = new DynamicParameters();
 
+            // TODO: May want to remove any unwanted columns (like ModifiedBy and/or ModifiedDate)
 	        {{SectionIf|IdIsNotIdentity}}
 	        {{Each|IdCols|parameters.Add("[[ColName]]", entity.[[ColName]]);}}
 	        {{/SectionIf}}
@@ -117,8 +117,23 @@ namespace ===To Be Populated===
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
         public async Task<bool> UpdateAsync({{Table}} entity)
         {
-            var spResults = await _db.QuerySingleAsync<int>("{{Schema}}.{{Table}}Upd", entity, commandType: CommandType.StoredProcedure);
-            return ParseSpResult(spResults);
+            var parameters = new DynamicParameters();
+
+            // TODO: May want to remove any unwanted columns (like CreatedBy and/or CreatedDate)
+            {{Each|ColList|parameters.Add("[[ColName]]", entity.[[ColName]]);}}
+
+            try
+            {
+                var spResults = await _db.QuerySingleAsync<int>("{{Schema}}.{{Table}}Upd", parameters, commandType: CommandType.StoredProcedure);
+                result = ParseSpResult(spResults);
+            }
+            catch (Exception ex)
+            {
+                Message = ex.Message;
+                result = false;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -161,6 +176,10 @@ namespace ===To Be Populated===
                     break;
                 case 1:
                     Message = "No rows were updated.";
+                    result = false;
+                    break;
+                case 90:
+                    Message = "Could not process.  Reference Constraint issue.";
                     result = false;
                     break;
                 case 99:

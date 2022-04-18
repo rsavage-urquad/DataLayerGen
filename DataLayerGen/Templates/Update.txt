@@ -27,6 +27,8 @@ BEGIN
 	begin try
 		begin tran {{Table}}Upd;
 
+		-- TODO: May wish to not include all column on update (i.e. - CreatedBy and CreatedDate ...)
+		-- TODO: May wish to set values manually (i.e. - "ModifiedDate = getdate()")
 		update {{Schema}}.{{Table}} set
 		{{SectionIf|IdIsNotIdentity}}
 		{{Each|IdCols|[[ColName]] = @[[ColName]],}}
