@@ -49,7 +49,7 @@ namespace ===To Be Populated===
         {{SectionIf|ActivePresent}}
         /// <param name="includeInactive">Should inactive items be included?</param>
         {{/SectionIf}}
-        /// <returns>{{Table}} for for requested Id or Not Found (HTTP 404)</returns>
+        /// <returns>{{Table}} for requested Id or Not Found (HTTP 404)</returns>
         {{SectionIf|IdIsIdentity}}
         [HttpGet("{{ControllerAnnotateId}}")]
         {{/SectionIf}}

@@ -39,7 +39,7 @@ namespace ===To Be Populated===
         /// <summary>
         /// GetByIdAsync() - Retrieve the {{Table}} object by Id
         /// </summary>
-        /// <param name="parameters">Dyanmic Parameters object containing the Id(s) and the @IncludeInactive value</param>
+        /// <param name="parameters">Dynamic Parameters object containing the Id(s) and the @IncludeInactive value</param>
         /// <returns>{{Table}} Object</returns>
         public async Task<{{Table}}> GetByIdAsync(DynamicParameters parameters)
         {
@@ -139,7 +139,7 @@ namespace ===To Be Populated===
         /// <summary>
         /// DeleteAsync() - Deletes an {{Table}} based on the Id
         /// </summary>
-        /// <param name="parameters">Dyanmic Parameters object containing the Id(s)</param>
+        /// <param name="parameters">Dynamic Parameters object containing the Id(s)</param>
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
         public async Task<bool> DeleteAsync(DynamicParameters parameters)
         {
@@ -147,10 +147,11 @@ namespace ===To Be Populated===
             return ParseSpResult(spResults);
         }
 
+{{SectionIf|ActiveNotPresent }}        
         /// <summary>
         /// ToggleActiveAsync() - Toggles the Active Indicator for a/an {{Table}}
         /// </summary>
-        /// <param name="parameters">Dyanmic Parameters object containing the Id(s)</param>
+        /// <param name="parameters">Dynamic Parameters object containing the Id(s)</param>
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
         public async Task<bool> ToggleActiveAsync(DynamicParameters parameters)
         {
@@ -158,6 +159,7 @@ namespace ===To Be Populated===
             return ParseSpResult(spResults);
         }
 
+{{/SectionIf}
         #endregion Public Methods
 
         #region Protected/Private Methods

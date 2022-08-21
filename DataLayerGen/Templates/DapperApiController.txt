@@ -58,7 +58,7 @@ namespace ===To Be Populated===
         {{SectionIf|ActivePresent}}
         /// <param name="includeInactive">Should inactive items be included?</param>
         {{/SectionIf}}
-        /// <returns>{{Table}} for for requested Id or Not Found (HTTP 404)</returns>
+        /// <returns>{{Table}} for requested Id or Not Found (HTTP 404)</returns>
         {{SectionIf|IdIsIdentity}}
         [HttpGet("{{ControllerAnnotateId}}")]
         {{/SectionIf}}
@@ -130,6 +130,11 @@ namespace ===To Be Populated===
             return (resp) ? NoContent() : BadRequest(new { message = _repo.Message });
         }
 
+        {{SectionIf|ActiveNotPresent}}
+        // -----
+        // ----- TODO: The following method can be removed as there is no Active Indicator to toggle
+        // -----
+        {{/SectionIf}
         /// <summary>
         /// ToggleActive() - Toggles the Active indicator for the requested Id
         /// </summary>

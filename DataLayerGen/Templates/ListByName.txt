@@ -18,7 +18,7 @@ BEGIN
 
     select
     {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
-    from {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
+    from {{Schema}}.{{Table}}{{If|TableAliasPresent| \{\\{\TableAlias\}\\}\}} with(nolock)
     where {{If|TableAliasPresent|\{\\{\TableAlias\}\\}\.}}{{NameColName}} = @{{NameColName}}
 	{{SectionIf|ActivePresent}}
 	and (

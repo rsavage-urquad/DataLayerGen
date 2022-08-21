@@ -40,14 +40,14 @@ namespace ===To Be Populated===
         /// <summary>
         /// GetByIdAsync() - Retrieve the {{Table}} object by Id
         /// </summary>
-        /// <param name="parameters">Dyanmic Parameters object containing the Id(s) and the @IncludeInactive value</param>
+        /// <param name="parameters">Dynamic Parameters object containing the Id(s) and the @IncludeInactive value</param>
         /// <returns>{{Table}} Object</returns>
         public async Task<{{Table}}> GetByIdAsync(DynamicParameters parameters)
         {
             {{Table}}? result = null;
             string sql = @"SELECT
 {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
-FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
+FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| \{\\{\TableAlias\}\\}\}} with(nolock)
 {{Each|IdCols|[First|WHERE:AND] [[TableAlias]][[ColName]] = @[[ColName]]}}
 ;";
 
@@ -67,7 +67,7 @@ FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} wit
             IEnumerable<{{Table}}> results;
             string sql = @"SELECT
 {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
-FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
+FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| \{\\{\TableAlias\}\\}\}} with(nolock)
 {{SectionIf|ActivePresent}}
 WHERE (
 	{{If|TableAliasPresent|\{\\{\TableAlias\}\\}\.}}{{ActiveColName}} = {{ActiveValue}} OR
@@ -93,7 +93,7 @@ WHERE (
         /// </summary>
         /// <param name="filter">Filtering clause</param>
         /// <param name="orderBy">Order by clause</param>
-        /// <param name="parameters">Dyanmic Parameters object containing parameters for Filtering clause and 
+        /// <param name="parameters">Dynamic Parameters object containing parameters for Filtering clause and 
         /// the @IncludeInactive value</param>
         /// <returns>List of {{Table}} Objects meeting the filter criteria.</returns>
         public async Task<IReadOnlyList<{{Table}}>> ListByFilterAsync(string filter, string orderBy, DynamicParameters parameters)
@@ -101,7 +101,7 @@ WHERE (
             IEnumerable<{{Table}}> results;
             string sql = @"SELECT
 {{Each|ColList|[[TableAlias]][[ColName]][Last|:,]}}
-FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| as \{\\{\TableAlias\}\\}\}} with(nolock)
+FROM {{Schema}}.{{Table}}{{If|TableAliasPresent| \{\\{\TableAlias\}\\}\}} with(nolock)
 ~~Filter~~
 {{SectionIf|ActivePresent}}
 ~~WhereOrAnd~~ (
@@ -147,8 +147,11 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
 
             try
             {
-                {{If|ActivePresent|var newId = }}await _db.QuerySingleAsync<int>(sql, entity);
+                {{SectionIf|IdIsNotIdentity}}
+                await _db.ExecuteAsync(sql, entity);
+                {{/SectionIf}}
                 {{SectionIf|IdIsIdentity}}
+                var newId = await _db.QuerySingleAsync<int>(sql, entity);
                 {{Each|IdCols|entity.[[ColName]] = newId;}}
                 {{/SectionIf}}
             }
@@ -184,7 +187,7 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
         /// <summary>
         /// DeleteAsync() - Deletes an {{Table}} based on the Id
         /// </summary>
-        /// <param name="parameters">Dyanmic Parameters object containing the Id(s)</param>
+        /// <param name="parameters">Dynamic Parameters object containing the Id(s)</param>
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
         public async Task<bool> DeleteAsync(DynamicParameters parameters)
         {
@@ -195,10 +198,16 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
             return await ProcessDbExecute(sql, parameters, null, "No rows were deleted.");
         }
 
+
+{{SectionIf|ActiveNotPresent}}
+        // -----
+        // ----- TODO: The following method can be removed as there is no Active Indicator to toggle
+        // -----
+{{/SectionIf}
         /// <summary>
         /// ToggleActiveAsync() - Toggles the Active Indicator for an {{Table}}
         /// </summary>
-        /// <param name="parameters">Dyanmic Parameters object containing the Id(s)</param>
+        /// <param name="parameters">Dynamic Parameters object containing the Id(s)</param>
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
         public async Task<bool> ToggleActiveAsync(DynamicParameters parameters)
         {
@@ -218,11 +227,11 @@ SELECT CAST(SCOPE_IDENTITY() as int) as NewId;
         #region Protected/Private Methods
 
         /// <summary>
-        /// ProcessDbExecute() - Process a common DB Execute operatio where the "Rows Affected" information
+        /// ProcessDbExecute() - Process a common DB Execute operation where the "Rows Affected" information
         /// is checked
         /// </summary>
         /// <param name="sql">SQL Command</param>
-        /// <param name="parameters">Dyanmic parameters for SQL Command</param>
+        /// <param name="parameters">Dynamic parameters for SQL Command</param>
         /// <param name="entity">Entity Object</param>
         /// <param name="noRowsAffectedMsg">Value to set Message if no row were affected</param>
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
