@@ -91,7 +91,7 @@ namespace ===To Be Populated===
                 
                 if (spResults.RetCode != 0)
                 {
-                    Message = "Exception occured during Insert";
+                    Message = "Exception occurred during Insert";
                     result = false;
                 }
                 {{SectionIf|IdIsIdentity}}
@@ -117,6 +117,7 @@ namespace ===To Be Populated===
         /// <returns>True if successful, otherwise false (Message will be populated with reason)</returns>
         public async Task<bool> UpdateAsync({{Table}} entity)
         {
+            bool result;
             var parameters = new DynamicParameters();
 
             // TODO: May want to remove any unwanted columns (like CreatedBy and/or CreatedDate)
@@ -189,7 +190,7 @@ namespace ===To Be Populated===
                     result = false;
                     break;
                 default:
-                    Message = $"Unknoun Exception - {spResults}";
+                    Message = $"Unknown Exception - {spResults}";
                     result = false;
                     break;
             }

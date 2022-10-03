@@ -1,4 +1,3 @@
-using Dapper;
 using System.Threading.Tasks;
 // TODO: Depending on Project Setup, may need to include using for Entity Class Namespaces
 

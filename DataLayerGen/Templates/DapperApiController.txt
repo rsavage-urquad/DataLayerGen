@@ -149,7 +149,7 @@ namespace ===To Be Populated===
         {{SectionIf|IdIsNotIdentity}}
         [HttpPut("ToggleActive")]
         {{/SectionIf}}
-        public async Task<ActionResult> ToggleActive({{CamelIdColParameters}}{If|ModifiedByPresent|, string requestedBy}})
+        public async Task<ActionResult> ToggleActive({{CamelIdColParameters}}{{If|ModifiedByPresent|, string requestedBy}})
         {
             var parameters = new DynamicParameters();
             {{Each|IdCols|parameters.Add("[[ColName]]", [[CamelColName]]);}}
