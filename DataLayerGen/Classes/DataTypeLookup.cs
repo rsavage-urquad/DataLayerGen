@@ -37,10 +37,10 @@ namespace DataLayerGen.Classes
             _TypeXref.Add("bigint", new CodeDataTypeInfo("long", true, "0"));
             _TypeXref.Add("float", new CodeDataTypeInfo("double", true, "0.0"));
             _TypeXref.Add("real", new CodeDataTypeInfo("float", true, "0.0"));
-            _TypeXref.Add("numeric", new CodeDataTypeInfo("decimal", true, "0.0"));
-            _TypeXref.Add("decimal", new CodeDataTypeInfo("decimal", true, "0.0"));
-            _TypeXref.Add("smallmoney", new CodeDataTypeInfo("decimal", true, "0.0"));
-            _TypeXref.Add("money", new CodeDataTypeInfo("decimal", true, "0.0"));
+            _TypeXref.Add("numeric", new CodeDataTypeInfo("decimal", true, "0.0M"));
+            _TypeXref.Add("decimal", new CodeDataTypeInfo("decimal", true, "0.0M"));
+            _TypeXref.Add("smallmoney", new CodeDataTypeInfo("decimal", true, "0.0M"));
+            _TypeXref.Add("money", new CodeDataTypeInfo("decimal", true, "0.0M"));
             _TypeXref.Add("datetime", new CodeDataTypeInfo("DateTime", true, "DateTime.MinValue"));
             _TypeXref.Add("datetime2", new CodeDataTypeInfo("DateTime", true, "DateTime.MinValue"));
             _TypeXref.Add("smalldatetime", new CodeDataTypeInfo("DateTime", true, "DateTime.MinValue"));

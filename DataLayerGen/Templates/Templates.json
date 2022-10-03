@@ -1,43 +1,43 @@
 [
   {
     "templateId": "GetById",
-    "title": "Get By Id",
+    "title": "SP - Get By Id",
     "templateFilename": "GetById.txt",
     "outputName": "{{Schema}}.{{Table}}GetById.sql"
   },
   {
     "templateId": "List",
-    "title": "List All",
+    "title": "SP - List All",
     "templateFilename": "List.txt",
     "outputName": "{{Schema}}.{{Table}}List.sql"
   },
   {
     "templateId": "ListByName",
-    "title": "List By Name",
+    "title": "SP - List By Name",
     "templateFilename": "ListByName.txt",
     "outputName": "{{Schema}}.{{Table}}ListByName.sql"
   },
   {
     "templateId": "Insert",
-    "title": "Insert",
+    "title": "SP - Insert",
     "templateFilename": "Insert.txt",
     "outputName": "{{Schema}}.{{Table}}Ins.sql"
   },
   {
     "templateId": "Update",
-    "title": "Update",
+    "title": "SP - Update",
     "templateFilename": "Update.txt",
     "outputName": "{{Schema}}.{{Table}}Upd.sql"
   },
   {
     "templateId": "Delete",
-    "title": "Delete",
+    "title": "SP - Delete",
     "templateFilename": "Delete.txt",
     "outputName": "{{Schema}}.{{Table}}Del.sql"
   },
   {
     "templateId": "ToggleActive",
-    "title": "Toggle Active Indicator",
+    "title": "SP - Toggle Active Indicator",
     "templateFilename": "ToggleActive.txt",
     "outputName": "{{Schema}}.{{Table}}ToggleActive.sql"
   },
@@ -49,13 +49,13 @@
   },
   {
     "templateId": "DataLayerClass",
-    "title": "Data Layer C# Class",
+    "title": "ADO Data Layer C# Class",
     "templateFilename": "DataLayerClass.txt",
     "outputName": "{{Table}}Dl.cs"
   },
   {
     "templateId": "ApiController",
-    "title": "API Controller",
+    "title": "ADO API Controller",
     "templateFilename": "ApiController.txt",
     "outputName": "{{Table}}Controller.cs"
   },
