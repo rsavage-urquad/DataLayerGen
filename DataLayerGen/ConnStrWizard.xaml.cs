@@ -138,7 +138,7 @@ namespace DataLayerGen
             }
             else
             {
-                connStr += $"User ID={UserId};Password={Password};";
+                connStr += $"User ID={UserId};Password={Password};TrustServerCertificate=True";
             }
 
             return connStr;

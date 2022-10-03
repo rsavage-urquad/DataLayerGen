@@ -1,8 +1,9 @@
 ﻿using DataLayerGen.Classes;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+
 
 namespace DataLayerGen.DataLayer
 {
@@ -70,7 +71,7 @@ namespace DataLayerGen.DataLayer
                     conn.Close();
                     retCode = true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     retCode = false;
                 }
